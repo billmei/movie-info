@@ -1,2 +1,2 @@
-# movie-info
+# Movie Info
 Find info on movies
