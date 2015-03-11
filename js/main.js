@@ -25,6 +25,7 @@ var fail_response = {
     "Response": "False",
     "Error": "Movie not found!"
 };
+
 var CONST = {};
 CONST.OMDB_BASE_URL = 'http://www.omdbapi.com/';
 
@@ -35,18 +36,28 @@ $(document).ready(function() {
         var title = encodeURIComponent($('#movie-title').val());
         var year = encodeURIComponent($('#movie-year').val());
 
-        if (!validate(title, 'is_not_empty') || !validate(parseInt(year), 'is_valid_year')) {
+        if (!validateInput(title, 'is_not_empty') ||
+            !validateInput(parseInt(year), 'is_valid_year')) {
             // TODO: Display a validation error to the user
             return;
         }
-        console.log(title);
-        console.log(year);
-        // result = getMovieFromOMDb(title, year);
-        
+
+        // movie = getMovieFromOMDb(title, year);
+        var movie = success_response;
+
+        if (movie.Response === 'False') {
+            if (movie.Error === 'Movie not found!') {
+                // TODO: Display a modal for movie not found
+            } else {
+                // TODO: Display a generic error message for something wrong with OMDb API
+            }
+        } else {
+            displayResults(movie);
+        }
     });
 });
 
-function validate(input, condition) {
+function validateInput(input, condition) {
     switch (condition) {
         case undefined:
             return false;
@@ -62,9 +73,7 @@ function validate(input, condition) {
 function getMovieFromOMDb(title, year) {
     $.ajax({
         url: CONST.OMDB_BASE_URL + '?title=' + title + '&year=' + year,
-        type: 'default GET (Other values: POST)',
-        dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
-        data: {param1: 'value1'},
+        type: 'GET',
     })
     .done(function() {
         console.log("success");
@@ -72,4 +81,18 @@ function getMovieFromOMDb(title, year) {
     .fail(function() {
         console.log("error");
     });
+}
+
+function displayResults(movie) {
+    var result = $('#movie-info');
+
+    result.children('.poster')  .html(movie.Poster);
+    result.children('.title')   .html(movie.Title);
+    result.children('.year')    .html(movie.Year);
+    result.children('.rating')  .html(movie.imdbRating);
+    result.children('.genre')   .html(movie.Genre);
+    result.children('.plot')    .html(movie.Plot);
+    result.children('.runtime') .html(movie.Runtime);
+    result.children('.actors')  .html(movie.Actors);
+    result.children('.director').html(movie.Director);
 }
