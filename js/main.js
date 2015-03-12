@@ -4,6 +4,8 @@ var fail_response = {
     "Error": "Movie not found!"
 };
 
+scrollingBackground();
+
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
         event.preventDefault();
@@ -37,6 +39,15 @@ $(document).ready(function() {
 
     });
 });
+
+function scrollingBackground() {
+    var container = $('#scrolling-background');
+    for (var i = 0; i < 10; i++) {
+        direction = i % 2 === 0 ? 'left' : 'right';
+        container.append('<div class="background-'+i+' scroll-'+direction+'"></div>');   
+    }
+    // Make the div 2x the size of the image, and then make it 
+}
 
 function validateInput(input, condition) {
     // TODO: Delete this when you're finished testing
