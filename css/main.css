@@ -2,12 +2,42 @@
     text-align: center;
 }
 
-
 #search-form {
     width: 400px;
     margin: 0 auto;
     padding: 20px;
-    border-radius: 4px auto;
-    color: black;
-    background-color: white;
+    border-radius: 4px;
+    color: #000;
+    background-color: #fff;
 }
+
+#movie-info {
+    list-style: none;
+    padding: 0;
+}
+    #movie-info .poster {
+        float: left;
+        width: 300px;
+        height: 1000px;
+        margin-right: 20px;
+    }
+        #movie-info .poster img {
+            width: 100%;
+        }
+    #movie-info .title {
+        font-size: 150%;
+    }
+    #movie-info .rating,
+    #movie-info .year,
+    #movie-info .genre {
+        color: #aaa;
+        display: inline-block;
+        margin-right: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    #movie-info .rating {
+        color: #FFD700;
+    }
+    #movie-info .plot {
+        margin-bottom: 0.5em;
+    }

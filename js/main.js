@@ -58,13 +58,16 @@ $(document).ready(function() {
 });
 
 function validateInput(input, condition) {
+    // TODO: Delete this when you're finished testing
+    return true;
+
     switch (condition) {
         case undefined:
             return false;
         case 'is_not_empty':
             return !!input;
         case 'is_valid_year':
-            return !isNaN(input) && input > 1000 && input < 9999;
+            return !isNaN(input) && input > 1000 && input <= new Date().getFullYear();
         default:
             return false;
     }
@@ -86,13 +89,83 @@ function getMovieFromOMDb(title, year) {
 function displayResults(movie) {
     var result = $('#movie-info');
 
-    result.children('.poster')  .html(movie.Poster);
+    result.children('.poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
+
     result.children('.title')   .html(movie.Title);
-    result.children('.year')    .html(movie.Year);
-    result.children('.rating')  .html(movie.imdbRating);
+    result.children('.rating')  .html(parseRatings(movie.imdbRating));
+    result.children('.year')    .html("Released " + movie.Year);
     result.children('.genre')   .html(movie.Genre);
     result.children('.plot')    .html(movie.Plot);
-    result.children('.runtime') .html(movie.Runtime);
-    result.children('.actors')  .html(movie.Actors);
-    result.children('.director').html(movie.Director);
+    result.children('.runtime') .html("Runtime " + movie.Runtime);
+    result.children('.actors')  .html(pluralize("Actor",movie.Actors));
+    result.children('.director').html(pluralize("Director",movie.Director));
+}
+
+function parseRatings(score, maxStars, divisor) {
+    score = parseInt(score);
+    if (!maxStars) {
+        maxStars = 10;
+    }
+    if (!divisor) {
+        divisor = 5;
+    }
+
+    var stars = score / maxStars;
+
+    var filledStars = Math.floor(stars * divisor);
+    var emptyStars = divisor - filledStars;
+
+    result = '';
+    for (var i = 0; i < filledStars; i++) {
+        result += '<i class="glyphicon glyphicon-star"></i>';
+    }
+    for (var j = 0; j < emptyStars; j++) {
+        result += '<i class="glyphicon glyphicon-star-empty"></i>';
+    }
+    return result;
+}
+
+function pluralize(role, people) {
+    var plural = false;
+    if (people.indexOf(',') > -1) {
+        plural = true;
+    }
+    if (plural) {
+        return role + "s: " + people;
+    } else {
+        return role + ": " + people;
+    }
+}
+
+
+// indexOf Polyfill from MDN
+// Production steps of ECMA-262, Edition 5, 15.4.4.14
+// Reference: http://es5.github.io/#x15.4.4.14
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(searchElement, fromIndex) {
+    var k;
+    if (this == null) {
+      throw new TypeError('"this" is null or not defined');
+    }
+    var O = Object(this);
+    var len = O.length >>> 0;
+    if (len === 0) {
+      return -1;
+    }
+    var n = +fromIndex || 0;
+    if (Math.abs(n) === Infinity) {
+      n = 0;
+    }
+    if (n >= len) {
+      return -1;
+    }
+    k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+    while (k < len) {
+      if (k in O && O[k] === searchElement) {
+        return k;
+      }
+      k++;
+    }
+    return -1;
+  };
 }
