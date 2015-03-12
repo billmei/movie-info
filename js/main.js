@@ -118,7 +118,7 @@ function displayResults(movie) {
 }
 
 function convertStars(score, maxStars, numStars) {
-    score = parseInt(score);
+    score = parseFloat(score);
     maxStars = maxStars || 10;
     numStars = numStars || 5;
 
