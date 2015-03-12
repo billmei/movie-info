@@ -33,22 +33,8 @@ $(document).ready(function() {
 
         // TODO: Start loading spinner
 
-        // movie = getMovieFromOMDb(title, year);
-        var movie = success_response;
-        // var movie = fail_response;
+        loadMovieFromOMDb(title, year);
 
-        if (movie.Response === 'False') {
-            if (movie.Error === 'Movie not found!') {
-                $('#no-results').slideDown(500);
-                alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
-            } else {
-                alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-            }
-        } else if (!movie) {
-            $('#no-results').slideDown(500);
-        } else {
-            displayResults(movie);
-        }
     });
 });
 
@@ -68,20 +54,30 @@ function validateInput(input, condition) {
     }
 }
 
-function getMovieFromOMDb(title, year) {
+function loadMovieFromOMDb(title, year) {
     // TODO: Make sure this works
-    $.ajax({
-        url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
-        type: 'GET'
-    })
-    .done(function(response) {
+    // $.ajax({
+        // url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
+        // type: 'GET'
+    // }).done(function(movie) {
+        var movie = success_response;
+        // var movie = fail_response;
         // TODO: Remove loading spinner
-        return response;
-    })
-    .fail(function(response) {
-        alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-        return response;
-    });
+        if (movie.Response === 'False') {
+            if (movie.Error === 'Movie not found!') {
+                $('#no-results').slideDown(500);
+                alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
+            } else {
+                alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+            }
+        } else if (!movie) {
+            $('#no-results').slideDown(500);
+        } else {
+            displayResults(movie);
+        }
+    // }).fail(function(movie) {
+    //     alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+    // });
 }
 
 function displayResults(movie) {
@@ -115,14 +111,18 @@ function convertStars(score, maxStars, numStars) {
     var stars = score / maxStars;
 
     var filledStars = Math.floor(stars * numStars);
-    var emptyStars = numStars - filledStars;
+    var halfStars = (stars * numStars - filledStars) > 0.4; // Only make a half star if the LSV is > 0.4
+    var emptyStars = numStars - filledStars - halfStars;
 
     result = '';
     for (var i = 0; i < filledStars; i++) {
-        result += '<i class="glyphicon glyphicon-star"></i>';
+        result += '<i class="fa fa-star"></i>';
+    }
+    if (halfStars) {
+        result += '<i class="fa fa-star-half-o"></i>';
     }
     for (var j = 0; j < emptyStars; j++) {
-        result += '<i class="glyphicon glyphicon-star-empty"></i>';
+        result += '<i class="fa fa-star-o"></i>';
     }
     return result;
 }
