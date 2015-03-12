@@ -28,11 +28,11 @@
         <form id="search-form">
           <div class="form-group">
             <label for="movie-title">Movie Title</label>
-            <input type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction">
+            <input type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Please enter the title of a movie.">
           </div>
           <div class="form-group">
             <label for="movie-year">Release Year</label>
-            <input type="number" class="form-control" id="movie-year" placeholder="(Optional)">
+            <input type="text" class="form-control" id="movie-year" placeholder="(Optional)" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Hmmm that year doesn't seem right.">
           </div>
           <div class="form-group">
             <button id="search-btn" class="btn btn-primary">Search</button>
@@ -77,6 +77,20 @@
     <script src="js/vendor/bootstrap.min.js"></script>
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
-
+  
+    <div id="alert-modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 id="alert-modal-title" class="modal-title"></h4>
+          </div>
+          <div id="alert-modal-body" class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

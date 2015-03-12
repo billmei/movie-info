@@ -33,9 +33,21 @@ $(document).ready(function() {
         var title = $('#movie-title').val();
         var year = $('#movie-year').val();
 
-        if (!validateInput(title, 'is_not_empty') ||
-            !validateInput(parseInt(year), 'is_valid_year')) {
-            // TODO: Display a validation error to the user
+        $('#movie-title').popover({'trigger':'manual'});
+        $('#movie-year').popover({'trigger':'manual'});
+        $('#movie-title').on('focus', function() {
+            $(this).popover('destroy');
+        });
+        $('#movie-year').on('focus', function() {
+            $(this).popover('destroy');
+        });
+
+        if (!validateInput(title, 'is_not_empty')) {
+            $('#movie-title').popover('show');
+            return;
+        }
+        if (!validateInput(+year, 'is_valid_year')) {
+            $('#movie-year').popover('show');
             return;
         }
 
@@ -46,10 +58,13 @@ $(document).ready(function() {
 
         if (movie.Response === 'False') {
             if (movie.Error === 'Movie not found!') {
-                // TODO: Display a modal for movie not found
+                // TODO: Change this from a modal to the results page.
+                alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
             } else {
-                // TODO: Display a generic error message for something wrong with OMDb API
+                alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
             }
+        } else if (!movie) {
+            // TODO: Make the results page display "No results."
         } else {
             displayResults(movie);
         }
@@ -58,15 +73,14 @@ $(document).ready(function() {
 
 function validateInput(input, condition) {
     // TODO: Delete this when you're finished testing
-    return true;
-
+    // return true;
     switch (condition) {
         case undefined:
             return false;
         case 'is_not_empty':
             return !!input;
         case 'is_valid_year':
-            return !isNaN(input) && input > 1000 && input <= new Date().getFullYear();
+            return input === 0 || !isNaN(input) && input > 1000 && input <= new Date().getFullYear();
         default:
             return false;
     }
@@ -82,7 +96,7 @@ function getMovieFromOMDb(title, year) {
         return response;
     })
     .fail(function(response) {
-        // TODO: Handle ajax failure, display an error, looks like the OMDb server is down.
+        alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
         return response;
     });
 }
@@ -133,8 +147,10 @@ function pluralize(role, people) {
 }
 
 
-function displayModal(title, body) {
-    
+function alertModal(title, body) {
+    $('#alert-modal-title').html(title);
+    $('#alert-modal-body').html(body);
+    $('#alert-modal').modal('show');
 }
 
 function assert(condition, message) {
