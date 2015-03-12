@@ -11,6 +11,24 @@ html {
     /*TODO: Make everything responsive*/
 }
 
+.loading-spinner {
+    display: none;
+    position: relative;
+    top: 1.5em;
+    z-index: -2;
+    color: white;
+}
+.loading-enabled {
+    display: inline;
+    z-index: 20;
+}
+.loading-disabled,
+.loading-disabled:hover,
+.loading-disabled:active,
+.loading-disabled:focus {
+    color: rgba(0,0,0,0);
+}
+
 .headline, .sub-headline {
     text-align: center;
 }

@@ -31,8 +31,8 @@ $(document).ready(function() {
             return;
         }
 
-        // TODO: Start loading spinner
-
+        $('.loading-spinner').addClass('loading-enabled');
+        $('#search-btn').addClass('loading-disabled');
         loadMovieFromOMDb(title, year);
 
     });
@@ -62,7 +62,10 @@ function loadMovieFromOMDb(title, year) {
     // }).done(function(movie) {
         var movie = success_response;
         // var movie = fail_response;
-        // TODO: Remove loading spinner
+
+        $('.loading-spinner').removeClass('loading-enabled');
+        $('#search-btn').removeClass('loading-disabled');
+
         if (movie.Response === 'False') {
             if (movie.Error === 'Movie not found!') {
                 $('#no-results').slideDown(500);
