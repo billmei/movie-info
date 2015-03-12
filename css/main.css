@@ -1,6 +1,7 @@
 .scrolling-background {
     height: 500px;
     background-color: #a00;
+    /*TODO: Make a scrolling background with movie posters*/
 }
 
 .headline, .sub-headline {
@@ -9,6 +10,9 @@
 .headline {
     margin-top: 15%;
     margin-bottom: 10%;
+}
+.sub-headline {
+    margin-bottom: 2em;
 }
 
 #search-form {
@@ -36,7 +40,18 @@
     #search-btn {
         display: block;
     }
+
+#no-results {
+    display: none;
+    text-align: center;
+    font-size: 200%;
+    font-weight: bold;
+    opacity: 0.5;
+    text-shadow: 0 -1px 0 #333;
+}
+
 #movie-info {
+    opacity: 0;
     list-style: none;
     padding: 0;
 }

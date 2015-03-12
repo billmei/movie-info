@@ -29,6 +29,8 @@ var fail_response = {
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
         event.preventDefault();
+        $('#no-results').hide();
+        $('#movie-info').animate({opacity: 0});
 
         var title = $('#movie-title').val();
         var year = $('#movie-year').val();
@@ -55,16 +57,17 @@ $(document).ready(function() {
 
         // movie = getMovieFromOMDb(title, year);
         var movie = success_response;
+        // var movie = fail_response;
 
         if (movie.Response === 'False') {
             if (movie.Error === 'Movie not found!') {
-                // TODO: Change this from a modal to the results page.
+                $('#no-results').slideDown(500);
                 alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
             } else {
                 alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
             }
         } else if (!movie) {
-            // TODO: Make the results page display "No results."
+            $('#no-results').slideDown(500);
         } else {
             displayResults(movie);
         }
@@ -73,7 +76,8 @@ $(document).ready(function() {
 
 function validateInput(input, condition) {
     // TODO: Delete this when you're finished testing
-    // return true;
+    return true;
+
     switch (condition) {
         case undefined:
             return false;
@@ -87,6 +91,7 @@ function validateInput(input, condition) {
 }
 
 function getMovieFromOMDb(title, year) {
+    // TODO: Make sure this works
     $.ajax({
         url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
         type: 'GET'
@@ -113,9 +118,17 @@ function displayResults(movie) {
     result.children('.genre')   .html(movie.Genre);
     result.children('.plot')    .html(movie.Plot);
     result.children('.runtime') .html("Runtime " + movie.Runtime);
+    // TODO: Turn this into a ul with a bullet point lists
+    //       the class name is .list
     result.children('.actors')  .html(pluralize("Actor",movie.Actors));
     result.children('.director').html(pluralize("Director",movie.Director));
     result.children('.writer')  .html(pluralize("Writer",movie.Writer));
+
+    result.animate({opacity: 1}, 200, 'linear', function() {
+        $('html,body').animate({
+            scrollTop: $('#results-page').offset().top
+        },500);
+    });
 }
 
 function convertStars(score, maxStars, numStars) {
