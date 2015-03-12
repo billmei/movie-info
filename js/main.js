@@ -26,21 +26,20 @@ var fail_response = {
     "Error": "Movie not found!"
 };
 
-var CONST = {};
-CONST.OMDB_BASE_URL = 'http://www.omdbapi.com/';
-
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
         event.preventDefault();
 
-        var title = encodeURIComponent($('#movie-title').val());
-        var year = encodeURIComponent($('#movie-year').val());
+        var title = $('#movie-title').val();
+        var year = $('#movie-year').val();
 
         if (!validateInput(title, 'is_not_empty') ||
             !validateInput(parseInt(year), 'is_valid_year')) {
             // TODO: Display a validation error to the user
             return;
         }
+
+        // TODO: Start loading spinner
 
         // movie = getMovieFromOMDb(title, year);
         var movie = success_response;
@@ -75,45 +74,45 @@ function validateInput(input, condition) {
 
 function getMovieFromOMDb(title, year) {
     $.ajax({
-        url: CONST.OMDB_BASE_URL + '?title=' + title + '&year=' + year,
-        type: 'GET',
+        url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
+        type: 'GET'
     })
-    .done(function() {
-        console.log("success");
+    .done(function(response) {
+        // TODO: Remove loading spinner
+        return response;
     })
-    .fail(function() {
-        console.log("error");
+    .fail(function(response) {
+        // TODO: Handle ajax failure, display an error, looks like the OMDb server is down.
+        return response;
     });
 }
 
 function displayResults(movie) {
     var result = $('#movie-info');
-
+    // TODO: Handle cases when no data is returned, e.g. Movie does not have a poster.
     result.children('.poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
 
     result.children('.title')   .html(movie.Title);
-    result.children('.rating')  .html(parseRatings(movie.imdbRating));
+    result.children('.stars')   .html(convertStars(movie.imdbRating));
+    result.children('.rated')   .html("Rated " + movie.Rated);
     result.children('.year')    .html("Released " + movie.Year);
     result.children('.genre')   .html(movie.Genre);
     result.children('.plot')    .html(movie.Plot);
     result.children('.runtime') .html("Runtime " + movie.Runtime);
     result.children('.actors')  .html(pluralize("Actor",movie.Actors));
     result.children('.director').html(pluralize("Director",movie.Director));
+    result.children('.writer')  .html(pluralize("Writer",movie.Writer));
 }
 
-function parseRatings(score, maxStars, divisor) {
+function convertStars(score, maxStars, numStars) {
     score = parseInt(score);
-    if (!maxStars) {
-        maxStars = 10;
-    }
-    if (!divisor) {
-        divisor = 5;
-    }
+    maxStars = maxStars || 10;
+    numStars = numStars || 5;
 
     var stars = score / maxStars;
 
-    var filledStars = Math.floor(stars * divisor);
-    var emptyStars = divisor - filledStars;
+    var filledStars = Math.floor(stars * numStars);
+    var emptyStars = numStars - filledStars;
 
     result = '';
     for (var i = 0; i < filledStars; i++) {
@@ -126,17 +125,23 @@ function parseRatings(score, maxStars, divisor) {
 }
 
 function pluralize(role, people) {
-    var plural = false;
     if (people.indexOf(',') > -1) {
-        plural = true;
-    }
-    if (plural) {
         return role + "s: " + people;
     } else {
         return role + ": " + people;
     }
 }
 
+
+function displayModal(title, body) {
+    
+}
+
+function assert(condition, message) {
+    if (!condition) {
+        throw Error('Assert failed' + (typeof message !== 'undefined' ? ': ' + message : ''));
+    }
+}
 
 // indexOf Polyfill from MDN
 // Production steps of ECMA-262, Edition 5, 15.4.4.14

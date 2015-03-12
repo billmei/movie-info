@@ -25,7 +25,7 @@
         </div>        
       </div>
       <div class="row">
-        <form id="search-form" class="form-inline">
+        <form id="search-form">
           <div class="form-group">
             <label for="movie-title">Movie Title</label>
             <input type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction">
@@ -34,7 +34,9 @@
             <label for="movie-year">Release Year</label>
             <input type="number" class="form-control" id="movie-year" placeholder="(Optional)">
           </div>
-          <button id="search-btn" class="btn btn-primary">Search</button>
+          <div class="form-group">
+            <button id="search-btn" class="btn btn-primary">Search</button>
+          </div>
         </form>
       </div>
     </div>
@@ -50,7 +52,9 @@
             <!-- Top Area -->
             <li class="poster"><img src="" alt=""></li>
             <li class="title"></li>
-            <li class="rating"></li>
+            <li class="rated label label-default"></li>
+            <li class="divider"></li>
+            <li class="stars"></li>
             <li class="year"></li>
             <li class="genre"></li>
 
@@ -59,8 +63,9 @@
 
             <!-- Bottom Area -->
             <li class="runtime"></li>
-            <li class="actors"></li>
             <li class="director"></li>
+            <li class="actors"></li>
+            <li class="writer"></li>
           </ul>
         </div>
       </div>
