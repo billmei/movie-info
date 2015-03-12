@@ -1,26 +1,4 @@
-var success_response = {
-    "Title": "The Matrix",
-    "Year": "1999",
-    "Rated": "R",
-    "Released": "31 Mar 1999",
-    "Runtime": "136 min",
-    "Genre": "Action, Sci-Fi",
-    "Director": "Andy Wachowski, Lana Wachowski",
-    "Writer": "Andy Wachowski, Lana Wachowski",
-    "Actors": "Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving",
-    "Plot": "Thomas A. Anderson is a man living two lives. By day he is an average computer programmer and by night a hacker known as Neo. Neo has always questioned his reality, but the truth is far beyond his imagination. Neo finds himself targeted by the police when he is contacted by Morpheus, a legendary computer hacker branded a terrorist by the government. Morpheus awakens Neo to the real world, a ravaged wasteland where most of humanity have been captured by a race of machines that live off of the humans' body heat and electrochemical energy and who imprison their minds within an artificial reality known as the Matrix. As a rebel against the machines, Neo must return to the Matrix and confront the agents: super-powerful computer programs devoted to snuffing out Neo and the entire human rebellion.",
-    "Language": "English",
-    "Country": "USA, Australia",
-    "Awards": "Won 4 Oscars. Another 34 wins & 39 nominations.",
-    "Poster": "http://ia.media-imdb.com/images/M/MV5BMTkxNDYxOTA4M15BMl5BanBnXkFtZTgwNTk0NzQxMTE@._V1_SX300.jpg",
-    "Metascore": "73",
-    "imdbRating": "8.7",
-    "imdbVotes": "992,323",
-    "imdbID": "tt0133093",
-    "Type": "movie",
-    "Response": "True"
-};
-
+var success_response = {"Title":"Pulp Fiction","Year":"1994","Rated":"R","Released":"14 Oct 1994","Runtime":"154 min","Genre":"Crime, Drama, Thriller","Director":"Quentin Tarantino","Writer":"Quentin Tarantino (story), Roger Avary (story), Quentin Tarantino","Actors":"Tim Roth, Amanda Plummer, Laura Lovelace, John Travolta","Plot":"Jules Winnfield and Vincent Vega are two hitmen who are out to retrieve a suitcase stolen from their employer, mob boss Marsellus Wallace. Wallace has also asked Vincent to take his wife Mia out a few days later when Wallace himself will be out of town. Butch Coolidge is an aging boxer who is paid by Wallace to lose his next fight. The lives of these seemingly unrelated people are woven together comprising of a series of funny, bizarre and uncalled-for incidents.","Language":"English, Spanish, French","Country":"USA","Awards":"Won 1 Oscar. Another 63 wins & 47 nominations.","Poster":"http://ia.media-imdb.com/images/M/MV5BMjE0ODk2NjczOV5BMl5BanBnXkFtZTYwNDQ0NDg4._V1_SX300.jpg","Metascore":"94","imdbRating":"8.9","imdbVotes":"1,086,222","imdbID":"tt0110912","Type":"movie","Response":"True"};
 var fail_response = {
     "Response": "False",
     "Error": "Movie not found!"
@@ -30,7 +8,7 @@ $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
         event.preventDefault();
         $('#no-results').hide();
-        $('#movie-info').animate({opacity: 0});
+        $('#movie-results').animate({opacity: 0});
 
         var title = $('#movie-title').val();
         var year = $('#movie-year').val();
@@ -109,7 +87,7 @@ function getMovieFromOMDb(title, year) {
 function displayResults(movie) {
     var result = $('#movie-info');
     // TODO: Handle cases when no data is returned, e.g. Movie does not have a poster.
-    result.children('.poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
+    $('#movie-poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
 
     result.children('.title')   .html(movie.Title);
     result.children('.stars')   .html(convertStars(movie.imdbRating));
@@ -118,13 +96,11 @@ function displayResults(movie) {
     result.children('.genre')   .html(movie.Genre);
     result.children('.plot')    .html(movie.Plot);
     result.children('.runtime') .html("Runtime " + movie.Runtime);
-    // TODO: Turn this into a ul with a bullet point lists
-    //       the class name is .list
-    result.children('.actors')  .html(pluralize("Actor",movie.Actors));
-    result.children('.director').html(pluralize("Director",movie.Director));
-    result.children('.writer')  .html(pluralize("Writer",movie.Writer));
+    result.children('.actors')  .html('<span class="movie-label">'+pluralize("Actor",movie.Actors)+': </span><p>'+movie.Actors+'</p>');
+    result.children('.director').html('<span class="movie-label">'+pluralize("Director",movie.Director)+': </span><p>'+movie.Director+'</p>');
+    result.children('.writer')  .html('<span class="movie-label">'+pluralize("Writer",movie.Writer)+': </span><p>'+movie.Writer+'</p>');
 
-    result.animate({opacity: 1}, 200, 'linear', function() {
+    $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
         $('html,body').animate({
             scrollTop: $('#results-page').offset().top
         },500);
@@ -153,9 +129,9 @@ function convertStars(score, maxStars, numStars) {
 
 function pluralize(role, people) {
     if (people.indexOf(',') > -1) {
-        return role + "s: " + people;
+        return role + "s";
     } else {
-        return role + ": " + people;
+        return role;
     }
 }
 

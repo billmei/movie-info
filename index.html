@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,10 +14,6 @@
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
-    <!--[if lt IE 8]>
-      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-
     <div class="container-fluid scrolling-background">
       <div class="row">
         <div class="col-xs-12">
@@ -35,38 +31,37 @@
             <input type="text" class="form-control" id="movie-year" placeholder="(Optional)" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Hmmm that year doesn't seem right.">
           </div>
           <div class="form-group">
-            <button id="search-btn" class="btn btn-primary">Search</button>
+            <button id="search-btn" class="btn btn-success">Search</button>
           </div>
         </form>
       </div>
     </div>
     <div id="results-page" class="container">
       <div class="row">
-        <div class="col-xs-12">
-          <h2 class="sub-headline">Results</h2>
-        </div>
-      </div>
-      <div class="row">
         <div class="col-xs-12 col-md-8 col-md-offset-2">
-          <ul id="movie-info">
-            <!-- Top Area -->
-            <li class="poster"><img src="" alt=""></li>
-            <li class="title"></li>
-            <li class="rated label label-default"></li>
-            <li class="divider"></li>
-            <li class="stars"></li>
-            <li class="year"></li>
-            <li class="genre"></li>
+          <div id="movie-results" class="row">
+            <div id="movie-poster" class="col-xs-12 col-sm-5">
+              <img src="" alt="">
+            </div>
+            <ul id="movie-info" class="col-xs-12 col-sm-7 col-sm-offset-5" >
+              <!-- Top Area -->
+              <li class="title"></li>
+              <li class="rated label label-default"></li>
+              <li class="divider"></li>
+              <li class="stars"></li>
+              <li class="year"></li>
+              <li class="genre"></li>
 
-            <!-- Middle Area -->
-            <li class="plot"></li>
+              <!-- Middle Area -->
+              <li class="plot"></li>
 
-            <!-- Bottom Area -->
-            <li class="runtime"></li>
-            <li class="director"></li>
-            <li class="actors"></li>
-            <li class="writer"></li>
-          </ul>
+              <!-- Bottom Area -->
+              <li class="runtime"></li>
+              <li class="director"></li>
+              <li class="actors"></li>
+              <li class="writer"></li>
+            </ul>
+          </div>
           <div id="no-results" class="text-muted">
             No results found :(
           </div>

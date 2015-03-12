@@ -1,7 +1,14 @@
+html {
+    /* Always show scrollbars */
+    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
 .scrolling-background {
-    height: 500px;
+    min-height: 500px;
     background-color: #a00;
     /*TODO: Make a scrolling background with movie posters*/
+    /*TODO: Make everything responsive*/
 }
 
 .headline, .sub-headline {
@@ -9,7 +16,7 @@
 }
 .headline {
     margin-top: 15%;
-    margin-bottom: 10%;
+    margin-bottom: 100px;
 }
 .sub-headline {
     margin-bottom: 2em;
@@ -17,7 +24,7 @@
 
 #search-form {
     width: 500px;
-    margin: 0 auto;
+    margin: 0 auto 50px auto;
     padding: 20px;
     border-radius: 4px;
     color: #000;
@@ -50,20 +57,20 @@
     text-shadow: 0 -1px 0 #333;
 }
 
-#movie-info {
+#movie-results {
     opacity: 0;
-    list-style: none;
-    padding: 0;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
-    #movie-info .poster {
-        float: left;
-        width: 300px;
-        height: 1000px;
-        margin-right: 20px;
-    }
-        #movie-info .poster img {
-            width: 100%;
-        }
+
+#movie-poster img {
+    width: 100%;
+}
+
+#movie-info {
+    list-style: none;
+    float: none;
+}
     #movie-info .title {
         font-size: 150%;
         display: inline-block;
@@ -77,7 +84,7 @@
     #movie-info .stars,
     #movie-info .year,
     #movie-info .genre {
-        color: #aaa;
+        color: #999999;
         display: inline-block;
         margin-right: 0.5em;
         margin-bottom: 0.5em;
@@ -88,6 +95,17 @@
     #movie-info .plot {
         margin-bottom: 0.5em;
     }
-    #movie-info .list {
-        list-style-type: square;
+    #movie-info .movie-label {
+        display: block;
+        color: #fff;
+    }
+
+    #movie-info .runtime,
+    #movie-info .director,
+    #movie-info .actors,
+    #movie-info .writer {
+        color: #999999
+    }
+    #movie-info .runtime {
+        margin-bottom: 0.5em;
     }
