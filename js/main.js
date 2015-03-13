@@ -1,9 +1,3 @@
-var success_response = {"Title":"Pulp Fiction","Year":"1994","Rated":"R","Released":"14 Oct 1994","Runtime":"154 min","Genre":"Crime, Drama, Thriller","Director":"Quentin Tarantino","Writer":"Quentin Tarantino (story), Roger Avary (story), Quentin Tarantino","Actors":"Tim Roth, Amanda Plummer, Laura Lovelace, John Travolta","Plot":"Jules Winnfield and Vincent Vega are two hitmen who are out to retrieve a suitcase stolen from their employer, mob boss Marsellus Wallace. Wallace has also asked Vincent to take his wife Mia out a few days later when Wallace himself will be out of town. Butch Coolidge is an aging boxer who is paid by Wallace to lose his next fight. The lives of these seemingly unrelated people are woven together comprising of a series of funny, bizarre and uncalled-for incidents.","Language":"English, Spanish, French","Country":"USA","Awards":"Won 1 Oscar. Another 63 wins & 47 nominations.","Poster":"http://ia.media-imdb.com/images/M/MV5BMjE0ODk2NjczOV5BMl5BanBnXkFtZTYwNDQ0NDg4._V1_SX300.jpg","Metascore":"94","imdbRating":"8.9","imdbVotes":"1,086,222","imdbID":"tt0110912","Type":"movie","Response":"True"};
-var fail_response = {
-    "Response": "False",
-    "Error": "Movie not found!"
-};
-
 scrollingBackground();
 
 $(document).ready(function() {
@@ -46,13 +40,10 @@ function scrollingBackground() {
         direction = i % 2 === 0 ? 'left' : 'right';
         container.append('<div class="background-'+i+' scroll-'+direction+'"></div>');   
     }
-    // Make the div 2x the size of the image, and then make it 
+    // Make the div 2x the size of the image, and then make it scroll
 }
 
 function validateInput(input, condition) {
-    // TODO: Delete this when you're finished testing
-    return true;
-
     switch (condition) {
         case undefined:
             return false;
@@ -66,13 +57,14 @@ function validateInput(input, condition) {
 }
 
 function loadMovieFromOMDb(title, year) {
-    // TODO: Make sure this works
-    // $.ajax({
-        // url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
-        // type: 'GET'
-    // }).done(function(movie) {
-        var movie = success_response;
-        // var movie = fail_response;
+    // Clear everything first
+    clearResults();
+    
+    $.ajax({
+        url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
+        type: 'GET'
+    }).done(function(movie) {
+        movie = JSON.parse(movie);
 
         $('.loading-spinner').removeClass('loading-enabled');
         $('#search-btn').removeClass('loading-disabled');
@@ -89,32 +81,40 @@ function loadMovieFromOMDb(title, year) {
         } else {
             displayResults(movie);
         }
-    // }).fail(function(movie) {
-    //     alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-    // });
+    }).fail(function(movie) {
+        alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+    });
 }
 
 function displayResults(movie) {
     var result = $('#movie-info');
-    // TODO: Handle cases when no data is returned, e.g. Movie does not have a poster.
-    $('#movie-poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
 
-    result.children('.title')   .html(movie.Title);
-    result.children('.stars')   .html(convertStars(movie.imdbRating));
-    result.children('.rated')   .html("Rated " + movie.Rated);
-    result.children('.year')    .html("Released " + movie.Year);
-    result.children('.genre')   .html(movie.Genre);
-    result.children('.plot')    .html(movie.Plot);
-    result.children('.runtime') .html("Runtime " + movie.Runtime);
-    result.children('.actors')  .html('<span class="movie-label">'+pluralize("Actor",movie.Actors)+': </span><p>'+movie.Actors+'</p>');
-    result.children('.director').html('<span class="movie-label">'+pluralize("Director",movie.Director)+': </span><p>'+movie.Director+'</p>');
-    result.children('.writer')  .html('<span class="movie-label">'+pluralize("Writer",movie.Writer)+': </span><p>'+movie.Writer+'</p>');
+    if (movie.Poster !== 'N/A') {
+        $('#movie-poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
+    }
+
+    if (movie.Title !== 'N/A')      result.children('.title')   .html(movie.Title);
+    if (movie.imdbRating !== 'N/A') result.children('.stars')   .html(convertStars(movie.imdbRating));
+    if (movie.Rated !== 'N/A') {    result.children('.rated')   .html("Rated " + movie.Rated);} else {result.children('.rated').html("Unrated");}
+    if (movie.Year !== 'N/A')       result.children('.year')    .html("Released " + movie.Year);
+    if (movie.Genre !== 'N/A')      result.children('.genre')   .html(movie.Genre);
+    if (movie.Plot !== 'N/A')       result.children('.plot')    .html(movie.Plot);
+    if (movie.Runtime !== 'N/A')    result.children('.runtime') .html("Runtime " + movie.Runtime);
+    if (movie.Actors !== 'N/A')     result.children('.actors')  .html('<span class="movie-label">'+pluralize("Actor",movie.Actors)+': </span><p>'+movie.Actors+'</p>');
+    if (movie.Director !== 'N/A')   result.children('.director').html('<span class="movie-label">'+pluralize("Director",movie.Director)+': </span><p>'+movie.Director+'</p>');
+    if (movie.Writer !== 'N/A')     result.children('.writer')  .html('<span class="movie-label">'+pluralize("Writer",movie.Writer)+': </span><p>'+movie.Writer+'</p>');
+    if (movie.Awards !== 'N/A')     result.children('.awards')  .html('<span class="movie-label">Awards: </span><p>'+movie.Awards+'</p>');
 
     $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
         $('html,body').animate({
             scrollTop: $('#results-page').offset().top
         },500);
     });
+}
+
+function clearResults() {
+    $('#movie-poster').children().attr('src','img/no_poster.png').attr('alt','No movie poster available');
+    result.children().html('');
 }
 
 function convertStars(score, maxStars, numStars) {
@@ -148,7 +148,6 @@ function pluralize(role, people) {
         return role;
     }
 }
-
 
 function alertModal(title, body) {
     $('#alert-modal-title').html(title);

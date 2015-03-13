@@ -176,7 +176,8 @@ html {
     #movie-info .runtime,
     #movie-info .director,
     #movie-info .actors,
-    #movie-info .writer {
+    #movie-info .writer,
+    #movie-info .awards {
         color: #999999
     }
     #movie-info .runtime {
