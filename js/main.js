@@ -2,11 +2,9 @@ scrollingBackground();
 
 /*
 TODO:
-    - Document every JS function
     - Setup Flask
     Create a test suite and assert all params >>> Comment: Not deleted for assessment.
 */
-
 
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
@@ -17,6 +15,7 @@ $(document).ready(function() {
         var title = $('#movie-title').val();
         var year = $('#movie-year').val();
 
+        // Popovers to display validation errors
         $('#movie-title').popover({'trigger':'manual'});
         $('#movie-year').popover({'trigger':'manual'});
         $('#movie-title').on('focus', function() {
@@ -35,6 +34,7 @@ $(document).ready(function() {
             return;
         }
 
+        // Start the loading spinner
         $('.loading-spinner').addClass('loading-enabled');
         $('#search-btn').addClass('loading-disabled');
         loadMovieFromOMDb(title, year);
@@ -43,6 +43,7 @@ $(document).ready(function() {
 });
 
 function scrollingBackground() {
+    // Animates the wall of movie-posters in the background
     var container = $('#scrolling-background');
     for (var i = 0; i < 5; i++) {
         direction = i % 2 === 0 ? 'left' : 'right';
@@ -51,6 +52,7 @@ function scrollingBackground() {
 }
 
 function validateInput(input, condition) {
+    // Ensures the movie title is not blank and the year entered is reasonable
     switch (condition) {
         case undefined:
             return false;
@@ -64,6 +66,9 @@ function validateInput(input, condition) {
 }
 
 function loadMovieFromOMDb(title, year) {
+    // Fetches movie information from OMDb
+    // http://www.omdbapi.com/
+
     // Clear everything first
     clearResults();
 
@@ -73,6 +78,7 @@ function loadMovieFromOMDb(title, year) {
     }).done(function(movie) {
         movie = JSON.parse(movie);
 
+        // Stop the loading spinner
         $('.loading-spinner').removeClass('loading-enabled');
         $('#search-btn').removeClass('loading-disabled');
 
@@ -94,6 +100,7 @@ function loadMovieFromOMDb(title, year) {
 }
 
 function displayResults(movie) {
+    // Populates the movie data into the DOM elements on the page
     var result = $('#movie-info');
 
     if (movie.Poster !== 'N/A') {
@@ -120,11 +127,13 @@ function displayResults(movie) {
 }
 
 function clearResults() {
+    // Clears movie data from the DOM elements in the page
     $('#movie-poster').children().attr('src','img/no_poster.png').attr('alt','No movie poster available');
     $('#movie-info').children().html('');
 }
 
 function convertStars(score, maxStars, numStars) {
+    // Conerts an n-star system to a 5-star system.
     score = parseFloat(score);
     maxStars = maxStars || 10;
     numStars = numStars || 5;
@@ -149,6 +158,8 @@ function convertStars(score, maxStars, numStars) {
 }
 
 function pluralize(role, people) {
+    // Pluralize the noun if there is more than one person
+    // E.g. "Director" -> "Directors"
     if (people.indexOf(',') > -1) {
         return role + "s";
     } else {
@@ -157,6 +168,7 @@ function pluralize(role, people) {
 }
 
 function alertModal(title, body) {
+    // Display error message to the user in a modal
     $('#alert-modal-title').html(title);
     $('#alert-modal-body').html(body);
     $('#alert-modal').modal('show');

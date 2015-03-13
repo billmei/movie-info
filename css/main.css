@@ -4,6 +4,11 @@ html {
     overflow-y: scroll;
 }
 
+body {
+    background-image: url('../img/striped_background.png');
+    background-repeat: repeat;
+}
+
 .vertical-space {
     margin-top: 20px;
 }
