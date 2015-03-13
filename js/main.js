@@ -40,7 +40,7 @@ function scrollingBackground() {
         direction = i % 2 === 0 ? 'left' : 'right';
         container.append('<div class="background-'+i+' scroll-'+direction+'"></div>');   
     }
-    // Make the div 2x the size of the image, and then make it scroll
+    // TODO: Make the div 2x the size of the image, and then make it scroll
 }
 
 function validateInput(input, condition) {
@@ -59,7 +59,7 @@ function validateInput(input, condition) {
 function loadMovieFromOMDb(title, year) {
     // Clear everything first
     clearResults();
-    
+
     $.ajax({
         url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
         type: 'GET'
@@ -114,7 +114,7 @@ function displayResults(movie) {
 
 function clearResults() {
     $('#movie-poster').children().attr('src','img/no_poster.png').attr('alt','No movie poster available');
-    result.children().html('');
+    $('#movie-info').children().html('');
 }
 
 function convertStars(score, maxStars, numStars) {

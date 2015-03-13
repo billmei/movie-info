@@ -4,6 +4,10 @@ html {
     overflow-y: scroll;
 }
 
+.vertical-space {
+    margin-top: 20px;
+}
+
 .header-container {
     height: 500px;
     background-image: url('../img/posters.jpg');
@@ -140,9 +144,12 @@ html {
     width: 100%;
 }
 
+.movie-sidebar {
+    float: none;
+}
 #movie-info {
     list-style: none;
-    float: none;
+    padding: 0;
 }
     #movie-info .title {
         font-size: 150%;
@@ -183,3 +190,10 @@ html {
     #movie-info .runtime {
         margin-bottom: 0.5em;
     }
+
+
+@media (max-width: 500px) {
+    #search-form {
+        width: 100%;
+    }
+}
