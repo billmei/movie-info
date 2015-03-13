@@ -22,23 +22,39 @@ html {
     top: 0;
     width: 100%;
     height: 500px;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 2;
+    z-index: 3;
+    overflow-x: hidden;
 }
-    /*#scrolling-background div {
+    #scrolling-background .transparent-overlay {
+        position: absolute;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        width: 100%;
+        height: 500px;
+        z-index: 5;
+    }
+    #scrolling-background .background-poster {
+        position: relative;
         width: 3200px;
         height: 100px;
-        z-index: -5;
+        z-index: 2;
         background-repeat: repeat;
-    }*/
+    }
     .scroll-left {
-
+        -webkit-animation: loop_left 90s linear infinite;
+        -moz-animation: loop_left 90s linear infinite;
+        -o-animation: loop_left 90s linear infinite;
+        animation: loop_left 90s linear infinite;
     }
     .scroll-right {
-
+        left: -1600px;
+        -webkit-animation: loop_right 90s linear infinite;
+        -moz-animation: loop_right 90s linear infinite;
+        -o-animation: loop_right 90s linear infinite;
+        animation: loop_right 90s linear infinite;
     }
-/*TODO: Make a scrolling background with movie posters*/
-/*    .background-0 {
+
+    .background-0 {
         background-image: url('../img/posters_0.jpg');
     }
     .background-1 {
@@ -67,7 +83,7 @@ html {
     }
     .background-9 {
         background-image: url('../img/posters_9.jpg');
-    }*/
+    }
 
 .loading-spinner {
     display: none;
@@ -197,3 +213,13 @@ html {
         width: 100%;
     }
 }
+
+@-webkit-keyframes loop_left { 0% { left: 0;} 100% { left: -1600px; } }
+@-moz-keyframes loop_left { 0% { left: 0;} 100% { left: -1600px; } }
+@-o-keyframes loop_left { 0% { left: 0;} 100% { left: -1600px; } }
+@-keyframes loop_left { 0% { left: 0;} 100% { left: -1600px; } }
+
+@-webkit-keyframes loop_right { 0% { left: -1600px} 100% { left: 0; } }
+@-moz-keyframes loop_right { 0% { left: -1600px} 100% { left: 0; } }
+@-o-keyframes loop_right { 0% { left: -1600px} 100% { left: 0; } }
+@-keyframes loop_right { 0% { left: -1600px} 100% { left: 0; } }

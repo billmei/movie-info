@@ -1,5 +1,13 @@
 scrollingBackground();
 
+/*
+TODO:
+    - Document every JS function
+    - Setup Flask
+    Create a test suite and assert all params >>> Comment: Not deleted for assessment.
+*/
+
+
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
         event.preventDefault();
@@ -36,11 +44,10 @@ $(document).ready(function() {
 
 function scrollingBackground() {
     var container = $('#scrolling-background');
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 5; i++) {
         direction = i % 2 === 0 ? 'left' : 'right';
-        container.append('<div class="background-'+i+' scroll-'+direction+'"></div>');   
+        container.append('<div class="background-'+i+' scroll-'+direction+' background-poster"></div>');   
     }
-    // TODO: Make the div 2x the size of the image, and then make it scroll
 }
 
 function validateInput(input, condition) {
