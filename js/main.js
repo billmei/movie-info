@@ -1,10 +1,21 @@
-scrollingBackground();
-
 /*
 TODO:
+    - Cross-browser testing (especially IE)
     - Setup Flask
     Create a test suite and assert all params >>> Comment: Not deleted for assessment.
 */
+
+buildHeaderBackground($(window).height(),100,5);
+resizeDiv($('#scrolling-background'), 500);
+resizeDiv($('.transparent-overlay'), 500);
+resizeDiv($('.header-container'), 500);
+
+function resizeDiv(div, minHeight) {
+    // Resizes a div to match the window height
+    if ($(window).height() > minHeight) {
+        div.css('height', $(window).height());
+    }
+}
 
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
@@ -42,10 +53,15 @@ $(document).ready(function() {
     });
 });
 
-function scrollingBackground() {
-    // Animates the wall of movie-posters in the background
+function buildHeaderBackground(containerHeight, rowHeight, minRows) {
+    // Creates the wall of movie-posters in the background that is animated via CSS.
     var container = $('#scrolling-background');
-    for (var i = 0; i < 5; i++) {
+
+    var rowsNeeded = Math.ceil(containerHeight / rowHeight);
+
+    rowsNeeded = rowsNeeded < 5 ? 5 : rowsNeeded;
+
+    for (var i = 0; i < rowsNeeded; i++) {
         direction = i % 2 === 0 ? 'left' : 'right';
         container.append('<div class="background-'+i+' scroll-'+direction+' background-poster"></div>');   
     }
