@@ -17,7 +17,7 @@ def cache_movie(movie):
         db.session.add(m)
         db.session.commit()
 
-    return "successfully cached"
+    return 'successfully cached'
 
 
 def get_movie(title, year=None):

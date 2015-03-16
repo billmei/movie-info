@@ -1,8 +1,6 @@
 /*
 TODO:
     - Cross-browser testing (especially IE)
-    - Setup Flask and database caching
-    Create a test suite and assert all params >>> Comment: Not deleted for assessment.
 */
 
 buildHeaderBackground($(window).height(),100,5);
@@ -98,16 +96,14 @@ function searchForMovie(title, year) {
         // Display result
         if (movie.length === 0) {
             // The movie doesn't exist in the database, so we fetch from OMDb
-            console.log("Fetching from OMDB");
             fetchFromOMDb(title, year);
         } else {
-            console.log("Fetching from internal database");
-            console.log(movie);
+            // Otherwise fetch it from our own database
             stopLoadingSpinner();
             showMovieInfo(JSON.parse(movie));
         }
     }).fail(function() {
-        // TODO: Tell the user to email us because the Flask database is down.
+        alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
     });
 }
 
@@ -134,8 +130,9 @@ function fetchFromOMDb(title, year) {
         } else if (!movie) {
             $('#no-results').slideDown(500);
         } else {
-            // This AJAX request uses the separate API to retrieve movie posters
+            // TODO: This AJAX request uses the separate API to retrieve movie posters
             // Used to get around the 403 error when code is in production.
+            // TODO: Fetch the API key from the environment variable.
             // $.ajax({
             //     url: 'http://img.omdbapi.com/?i=' + movie.imdbID + '&apikey=',
             //     type: 'GET'
@@ -157,10 +154,6 @@ function cacheMovie(movie) {
         url: '/api/cache_movie',
         type: 'POST',
         data: {movie_data: movie}
-    }).done(function(result) {
-        console.log(result);
-    }).fail(function() {
-        console.log("error caching");
     });
 }
 
