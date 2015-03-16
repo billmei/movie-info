@@ -33,7 +33,7 @@ Install `virtualenv` and app requirements (use the `--no-site-packages` flag for
 
 ### Step 3
 
-Generate a Flask secret key and save it as `/secret.txt`. If running on Heroku instead of localhost, set the environment variable:
+Generate a Flask secret key and save it as `/secret.txt` in the root folder. If running on Heroku instead of localhost, set the environment variable:
 
 	$ heroku config:set FLASK_SECRET_KEY=your-secret-key-here
 
