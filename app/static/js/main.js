@@ -48,7 +48,7 @@ $(document).ready(function() {
         // Start the loading spinner
         $('.loading-spinner').addClass('loading-enabled');
         $('#search-btn').addClass('loading-disabled');
-        loadMovieFromOMDb(title, year);
+        searchForMovie(title, year);
 
     });
 });
@@ -82,22 +82,47 @@ function validateInput(input, condition) {
     }
 }
 
-function loadMovieFromOMDb(title, year) {
-    // Fetches movie information from OMDb
-    // http://www.omdbapi.com/
-
+function searchForMovie(title, year) {
     // Clear everything first
     clearResults();
 
+    // Fetch from the database first if the movie exists
+    $.ajax({
+        url: '/api/get_movie',
+        type: 'GET',
+        data: {
+            movie_title: title,
+            movie_year: year
+        }
+    }).done(function(movie) {
+        // Display result
+        if (movie.length === 0) {
+            // The movie doesn't exist in the database, so we fetch from OMDb
+            console.log("Fetching from OMDB");
+            fetchFromOMDb(title, year);
+        } else {
+            console.log("Fetching from internal database");
+            console.log(movie);
+            stopLoadingSpinner();
+            showMovieInfo(JSON.parse(movie));
+        }
+    }).fail(function() {
+        // TODO: Tell the user to email us because the Flask database is down.
+    });
+}
+
+function fetchFromOMDb(title, year) {
+    // Fetches movie information from OMDb (http://www.omdbapi.com/)
+    // Returns the movie data
+
+    var movie;
     $.ajax({
         url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
         type: 'GET'
-    }).done(function(movie) {
-        movie = JSON.parse(movie);
+    }).done(function(response) {
+        movie = JSON.parse(response);
 
-        // Stop the loading spinner
-        $('.loading-spinner').removeClass('loading-enabled');
-        $('#search-btn').removeClass('loading-disabled');
+        stopLoadingSpinner();
 
         if (movie.Response === 'False') {
             if (movie.Error === 'Movie not found!') {
@@ -118,10 +143,31 @@ function loadMovieFromOMDb(title, year) {
             //     showMoviePoster(poster, movie.Title);
             // });
             showMovieInfo(movie);
+            cacheMovie(movie);
         }
-    }).fail(function(movie) {
+    }).fail(function() {
         alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
     });
+}
+
+function cacheMovie(movie) {
+    // Cache the movie in the database
+    movie = JSON.stringify(movie);
+    $.ajax({
+        url: '/api/cache_movie',
+        type: 'POST',
+        data: {movie_data: movie}
+    }).done(function(result) {
+        console.log(result);
+    }).fail(function() {
+        console.log("error caching");
+    });
+}
+
+function stopLoadingSpinner() {
+    // Stop the loading spinner
+    $('.loading-spinner').removeClass('loading-enabled');
+    $('#search-btn').removeClass('loading-disabled');
 }
 
 function showMovieInfo(movie) {

@@ -3,7 +3,7 @@ Find info on movies. [Click here](http://ga-movie-info.herokuapp.com/) for the d
 
 Created for a General Assembly coding challenge.
 
-## Description
+## Features
 
 
 
