@@ -1,7 +1,7 @@
 /*
 TODO:
     - Cross-browser testing (especially IE)
-    - Setup Flask
+    - Setup Flask and database caching
     Create a test suite and assert all params >>> Comment: Not deleted for assessment.
 */
 
@@ -59,11 +59,12 @@ function buildHeaderBackground(containerHeight, rowHeight, minRows) {
 
     var rowsNeeded = Math.ceil(containerHeight / rowHeight);
 
+    // Minimum 5 rows
     rowsNeeded = rowsNeeded < 5 ? 5 : rowsNeeded;
 
     for (var i = 0; i < rowsNeeded; i++) {
         direction = i % 2 === 0 ? 'left' : 'right';
-        container.append('<div class="background-'+i+' scroll-'+direction+' background-poster"></div>');   
+        container.append('<div class="background-'+(i%10)+' scroll-'+direction+' background-poster"></div>');   
     }
 }
 
