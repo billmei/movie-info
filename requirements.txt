@@ -3,7 +3,13 @@ Flask-SQLAlchemy==2.0
 Jinja2==2.7.3
 MarkupSafe==0.23
 SQLAlchemy==1.0.0b1
+Tempita==0.5.3dev
 Werkzeug==0.10.1
+decorator==3.4.0
 distribute==0.6.34
 gunicorn==19.3.0
 itsdangerous==0.24
+pbr==0.10.8
+six==1.9.0
+sqlalchemy-migrate==0.9.5
+sqlparse==0.1.14
