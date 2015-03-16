@@ -1,5 +1,5 @@
 # Movie Info
-Find info on movies. [Click here](http://kortaggio.github.io/movie-info/) for the demo.
+Find info on movies. [Click here](http://ga-movie-info.herokuapp.com/) for the demo.
 
 Created for a General Assembly coding challenge.
 
@@ -30,9 +30,18 @@ Install `virtualenv` and app requirements (use the `--no-site-packages` flag for
 
 ### Step 3
 
-Generate a Flask secret key and save it as `/secret.txt`
+Generate a Flask secret key and save it as `/secret.txt`. If running on Heroku instead of localhost, set the environment variable:
+
+	$ heroku config:set FLASK_SECRET_KEY=your-secret-key-here
 
 ### Step 4
+
+Create and migrate the database
+
+	$ python db_create.py
+	$ python db_migrate.py
+
+### Step 5
 
 Run with
 
