@@ -138,6 +138,7 @@ body {
     .form-group {
         display: inline-block;
         margin: 0 2px;
+        vertical-align: bottom;
     }
     #movie-year {
         width: 8em;
@@ -212,9 +213,24 @@ body {
         margin-bottom: 0.5em;
     }
 
-
 @media (max-width: 500px) {
     #search-form {
+        width: 100%;
+    }
+    .form-group {
+        display: block;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+        .form-group:first-child {
+            margin-top: 0;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+    #movie-title,
+    #movie-year,
+    #search-btn {
         width: 100%;
     }
 }
