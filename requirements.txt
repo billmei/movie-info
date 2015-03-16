@@ -1,0 +1,9 @@
+Flask==0.10.1
+Flask-SQLAlchemy==2.0
+Jinja2==2.7.3
+MarkupSafe==0.23
+SQLAlchemy==1.0.0b1
+Werkzeug==0.10.1
+distribute==0.6.34
+gunicorn==19.3.0
+itsdangerous==0.24

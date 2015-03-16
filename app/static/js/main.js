@@ -158,7 +158,7 @@ function showMoviePoster(poster, title) {
 
 function clearResults() {
     // Clears movie data from the DOM elements in the page
-    $('#movie-poster').children().attr('src','img/no_poster.png').attr('alt','No movie poster available');
+    $('#movie-poster').children().attr('src','static/img/no_poster.png').attr('alt','No movie poster available');
     $('#movie-info').children().html('');
 }
 

@@ -3,6 +3,11 @@ Find info on movies. [Click here](http://kortaggio.github.io/movie-info/) for th
 
 Created for a General Assembly coding challenge.
 
+## Description
+
+
+
+
 ## Installation Instructions
 
 Python Version 3.3.1
@@ -23,9 +28,11 @@ Install `virtualenv` and app requirements (use the `--no-site-packages` flag for
 	$ source venv/bin/activate
 	$ pip install -r requirements.txt
 
-Generate a secret key and stick it into `/secret.txt`
-
 ### Step 3
+
+Generate a Flask secret key and save it as `/secret.txt`
+
+### Step 4
 
 Run with
 
