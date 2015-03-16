@@ -3,17 +3,10 @@ TODO:
     - Cross-browser testing (especially IE)
 */
 
-buildHeaderBackground($(window).height(),100,5);
+buildHeaderBackground($(window).height(), 100, 5);
 resizeDiv($('#scrolling-background'), 500);
 resizeDiv($('.transparent-overlay'), 500);
 resizeDiv($('.header-container'), 500);
-
-function resizeDiv(div, minHeight) {
-    // Resizes a div to match the window height
-    if ($(window).height() > minHeight) {
-        div.css('height', $(window).height());
-    }
-}
 
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
@@ -43,10 +36,8 @@ $(document).ready(function() {
             return;
         }
 
-        // Start the loading spinner
-        $('.loading-spinner').addClass('loading-enabled');
-        $('#search-btn').addClass('loading-disabled');
-        searchForMovie(title, year);
+        startLoadingSpinner();
+        searchMovie(title, year);
 
     });
 });
@@ -66,6 +57,13 @@ function buildHeaderBackground(containerHeight, rowHeight, minRows) {
     }
 }
 
+function resizeDiv(div, minHeight) {
+    // Resizes a div to match the window height
+    if ($(window).height() > minHeight) {
+        div.css('height', $(window).height());
+    }
+}
+
 function validateInput(input, condition) {
     // Ensures the movie title is not blank and the year entered is reasonable
     switch (condition) {
@@ -80,7 +78,35 @@ function validateInput(input, condition) {
     }
 }
 
-function searchForMovie(title, year) {
+function loadMovie(imdb_id) {
+    // Search for movie based on imdb_id
+    if (!imdb_id || imdb_id.length === 0) {
+        return;
+    }
+
+    clearResults();
+    $.ajax({
+        url: '/api/get_movie_by_id',
+        type: 'GET',
+        data: {
+            imdb_id: imdb_id
+        }
+    }).done(function(movie) {
+        // Display result
+        if (movie.length === 0) {
+            // The movie doesn't exist in the database, so we fetch from OMDb
+            loadMovieFromOMDb(imdb_id);
+        } else {
+            // Otherwise fetch it from our own database
+            handleDatabaseResponse(movie);
+        }
+    }).fail(function() {
+        alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
+    });    
+
+}
+
+function searchMovie(title, year) {
     // Clear everything first
     clearResults();
 
@@ -96,19 +122,38 @@ function searchForMovie(title, year) {
         // Display result
         if (movie.length === 0) {
             // The movie doesn't exist in the database, so we fetch from OMDb
-            fetchFromOMDb(title, year);
+            searchMovieFromOMDb(title, year);
         } else {
             // Otherwise fetch it from our own database
-            stopLoadingSpinner();
-            showMovieInfo(JSON.parse(movie));
+            handleDatabaseResponse(movie);
         }
     }).fail(function() {
         alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
     });
 }
 
-function fetchFromOMDb(title, year) {
-    // Fetches movie information from OMDb (http://www.omdbapi.com/)
+function handleDatabaseResponse(response) {
+    // Handle the data passed back from our database
+    stopLoadingSpinner();
+    showMovieInfo(JSON.parse(response));
+}
+
+function loadMovieFromOMDb(imdb_id) {
+    // Fetches movie information by imdb_id from OMDb (http://www.omdbapi.com/)
+    $.ajax({
+        url: 'http://www.omdbapi.com/?i=' + imdb_id,
+        type: 'GET',
+    }).done(function(response) {
+        handleOMDbResponse(response);
+    })
+    .fail(function() {
+        alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+    });
+    
+}
+
+function searchMovieFromOMDb(title, year) {
+    // Fetches movie information by title and year from OMDb (http://www.omdbapi.com/)
     // Returns the movie data
 
     var movie;
@@ -116,35 +161,40 @@ function fetchFromOMDb(title, year) {
         url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
         type: 'GET'
     }).done(function(response) {
-        movie = JSON.parse(response);
-
-        stopLoadingSpinner();
-
-        if (movie.Response === 'False') {
-            if (movie.Error === 'Movie not found!') {
-                $('#no-results').slideDown(500);
-                alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
-            } else {
-                alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-            }
-        } else if (!movie) {
-            $('#no-results').slideDown(500);
-        } else {
-            // TODO: This AJAX request uses the separate API to retrieve movie posters
-            // Used to get around the 403 error when code is in production.
-            // TODO: Fetch the API key from the environment variable.
-            // $.ajax({
-            //     url: 'http://img.omdbapi.com/?i=' + movie.imdbID + '&apikey=',
-            //     type: 'GET'
-            // }).done(function(poster) {
-            //     showMoviePoster(poster, movie.Title);
-            // });
-            showMovieInfo(movie);
-            cacheMovie(movie);
-        }
+        handleOMDbResponse(response);
     }).fail(function() {
         alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
     });
+}
+
+function handleOMDbResponse(response) {
+    movie = JSON.parse(response);
+
+    stopLoadingSpinner();
+
+    if (movie.Response === 'False') {
+        if (movie.Error === 'Movie not found!') {
+            $('#no-results').slideDown(500);
+            alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
+        } else {
+            alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+        }
+    } else if (!movie) {
+        $('#no-results').slideDown(500);
+    } else {
+        // This AJAX request uses the separate API to retrieve movie posters.
+        // Used to get around the 403 error when code is in production.
+        // TODO: OMDb hasn't emailed me my API key yet, I have to set this up when they reply to me.
+        // TODO: Fetch the API key using Python from the backend, and store the API key in an environment variable.
+        // $.ajax({
+        //     url: 'http://img.omdbapi.com/?i=' + movie.imdbID + '&apikey=',
+        //     type: 'GET'
+        // }).done(function(poster) {
+        //     showMoviePoster(poster, movie.Title);
+        // });
+        showMovieInfo(movie);
+        cacheMovie(movie);
+    }
 }
 
 function cacheMovie(movie) {
@@ -157,6 +207,12 @@ function cacheMovie(movie) {
     });
 }
 
+function startLoadingSpinner() {
+    // Start the loading spinner
+    $('.loading-spinner').addClass('loading-enabled');
+    $('#search-btn').addClass('loading-disabled');
+}
+
 function stopLoadingSpinner() {
     // Stop the loading spinner
     $('.loading-spinner').removeClass('loading-enabled');
@@ -166,6 +222,8 @@ function stopLoadingSpinner() {
 function showMovieInfo(movie) {
     // Populates the movie data into the DOM elements on the page
     var result = $('#movie-info');
+
+    window.history.pushState(null, null, '/movie/' + movie.imdbID);
 
     // Comment out this line when using the separate OMDb API to retrieve movie posters.
     showMoviePoster(movie.Poster, movie.Title);
@@ -197,7 +255,7 @@ function showMoviePoster(poster, title) {
 
 function clearResults() {
     // Clears movie data from the DOM elements in the page
-    $('#movie-poster').children().attr('src','static/img/no_poster.png').attr('alt','No movie poster available');
+    $('#movie-poster').children().attr('src','/static/img/no_poster.png').attr('alt','No movie poster available');
     $('#movie-info').children().html('');
 }
 

@@ -23,7 +23,16 @@ def api_get_movie():
     else:
         return ''
 
-# TODO: Hash the url to create a permalink, then cache this in a database.
-# @app.route('/result/<url_hash>', methods=['GET','POST'])
-# def render_result_page(url_hash):
-#     return render_template('result.html', url_hash=url_hash)
+@app.route('/api/get_movie_by_id', methods=['GET'])
+def api_get_movie_by_id():
+    result = api.get_movie_by_id(
+        request.args.get('imdb_id','')
+        )
+    if result:
+        return result
+    else:
+        return ''
+
+@app.route('/movie/<imdb_id>', methods=['GET'])
+def render_movie_page(imdb_id):
+    return render_template('index.html', imdb_id=imdb_id)

@@ -22,8 +22,8 @@ def cache_movie(movie):
 
 def get_movie(title, year=None):
     """
-    Retrieves movies from the database by IMDB id.
-    Returns None if the movie does not exist in the database
+    Retrieves movies from the database by title and year.
+    Returns None if the movie does not exist in the database.
     """
     title = title.lower()
 
@@ -36,6 +36,18 @@ def get_movie(title, year=None):
             title=title).filter_by(
             year=year).first()
 
+    if m:
+        return m.movie_data
+    else:
+        return None
+
+def get_movie_by_id(imdb_id):
+    """
+    Retrieves movies from the database by IMDB id.
+    Returns None if the movie does not exist in the database.
+    """
+
+    m = models.Movie.query.filter_by(imdb_id=imdb_id).first()
     if m:
         return m.movie_data
     else:

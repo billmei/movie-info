@@ -6,7 +6,7 @@ Created for a General Assembly coding challenge.
 ## Features
 
 
-
+- I could have used Jinja templates in Flask but I chose to fill in the data with jQuery instead since you guys wanted to see a sample of my JavaScript knowledge.
 
 ## Installation Instructions
 
