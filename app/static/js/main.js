@@ -245,6 +245,17 @@ function showMovieInfo(movie) {
     if (movie.Writer !== 'N/A')     result.children('.writer')  .html('<span class="movie-label">'+pluralize("Writer",movie.Writer)+': </span><p>'+movie.Writer+'</p>');
     if (movie.Awards !== 'N/A')     result.children('.awards')  .html('<span class="movie-label">Awards: </span><p>'+movie.Awards+'</p>');
 
+    // Generate links for social media buttons
+    var statusMesssage;
+    if (movie.Title !== 'N/A') {
+        statusMesssage = encodeURIComponent('Check out the movie '+ movie.Title + ': ');
+    } else {
+        statusMesssage = '';
+    }
+    $('.ssk-facebook').attr('href','https://www.facebook.com/sharer/sharer.php?u=' + window.location.href);
+    $('.ssk-twitter').attr('href','https://twitter.com/home?status=' + statusMesssage + window.location.href);
+    $('.ssk-google-plus').attr('href','https://plus.google.com/share?url=' + window.location.href);
+
     $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
         $('html,body').animate({
             scrollTop: $('#results-page').offset().top
@@ -255,14 +266,18 @@ function showMovieInfo(movie) {
 function showMoviePoster(poster, title) {
     // Displays the movie poster in the results
     if (poster !== 'N/A') {
-        $('#movie-poster').children().attr('src',poster).attr('alt',title);
+        $('#movie-poster').children('img').attr('src',poster).attr('alt',title);
     }
 }
 
 function clearResults() {
     // Clears movie data from the DOM elements in the page
-    $('#movie-poster').children().attr('src','/static/img/no_poster.png').attr('alt','No movie poster available');
+    $('#movie-poster').children('img').attr('src','/static/img/no_poster.png').attr('alt','No movie poster available');
     $('#movie-info').children().html('');
+    $('.ssk-facebook').attr('href','');
+    $('.ssk-twitter').attr('href','');
+    $('.ssk-google-plus').attr('href','');
+
 }
 
 function convertStars(score, maxStars, numStars) {

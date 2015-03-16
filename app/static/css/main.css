@@ -213,6 +213,19 @@ body {
         margin-bottom: 0.5em;
     }
 
+.share-links {
+    padding: 0;
+    margin-bottom: 2em;
+    list-style: none;
+}
+    .share-links a {
+        display: block;
+        text-align: left;
+        margin-top: 1em;
+        position: relative;
+        z-index: 2;
+    }
+
 @media (max-width: 500px) {
     #search-form {
         width: 100%;
