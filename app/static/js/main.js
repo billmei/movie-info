@@ -1,8 +1,3 @@
-/*
-TODO:
-    - Cross-browser testing (especially IE)
-*/
-
 buildHeaderBackground($(window).height(), 100, 5);
 resizeDiv($('#scrolling-background'), 500);
 resizeDiv($('.transparent-overlay'), 500);
