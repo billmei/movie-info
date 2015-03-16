@@ -11,6 +11,7 @@ resizeDiv($('.header-container'), 500);
 $(document).ready(function() {
     $('#search-btn').on('click', function(event) {
         event.preventDefault();
+
         $('#no-results').hide();
         $('#movie-results').animate({opacity: 0});
 
@@ -26,7 +27,6 @@ $(document).ready(function() {
         $('#movie-year').on('focus', function() {
             $(this).popover('destroy');
         });
-
         if (!validateInput(title, 'is_not_empty')) {
             $('#movie-title').popover('show');
             return;
@@ -38,7 +38,6 @@ $(document).ready(function() {
 
         startLoadingSpinner();
         searchMovie(title, year);
-
     });
 });
 
@@ -79,12 +78,15 @@ function validateInput(input, condition) {
 }
 
 function loadMovie(imdb_id) {
-    // Search for movie based on imdb_id
+    // Search for a movie based on the imdb_id
     if (!imdb_id || imdb_id.length === 0) {
         return;
     }
 
+    // Clear everything first
     clearResults();
+
+    // Fetch from our own database first if the movie exists
     $.ajax({
         url: '/api/get_movie_by_id',
         type: 'GET',
@@ -107,10 +109,12 @@ function loadMovie(imdb_id) {
 }
 
 function searchMovie(title, year) {
+    // Search for a movie based on the title and release year
+
     // Clear everything first
     clearResults();
 
-    // Fetch from the database first if the movie exists
+    // Fetch from our own database first if the movie exists
     $.ajax({
         url: '/api/get_movie',
         type: 'GET',
@@ -154,9 +158,6 @@ function loadMovieFromOMDb(imdb_id) {
 
 function searchMovieFromOMDb(title, year) {
     // Fetches movie information by title and year from OMDb (http://www.omdbapi.com/)
-    // Returns the movie data
-
-    var movie;
     $.ajax({
         url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
         type: 'GET'
@@ -168,7 +169,8 @@ function searchMovieFromOMDb(title, year) {
 }
 
 function handleOMDbResponse(response) {
-    movie = JSON.parse(response);
+    // Handles the response from OMDb, displaying error messages if necessary.
+    var movie = JSON.parse(response);
 
     stopLoadingSpinner();
 
@@ -192,13 +194,16 @@ function handleOMDbResponse(response) {
         // }).done(function(poster) {
         //     showMoviePoster(poster, movie.Title);
         // });
+
+        // Show the movie information
         showMovieInfo(movie);
+        // Cache the result in our database so that we don't have to call the OMDb API again.
         cacheMovie(movie);
     }
 }
 
 function cacheMovie(movie) {
-    // Cache the movie in the database
+    // Cache the movie in our database
     movie = JSON.stringify(movie);
     $.ajax({
         url: '/api/cache_movie',
@@ -248,6 +253,7 @@ function showMovieInfo(movie) {
 }
 
 function showMoviePoster(poster, title) {
+    // Displays the movie poster in the results
     if (poster !== 'N/A') {
         $('#movie-poster').children().attr('src',poster).attr('alt',title);
     }
@@ -260,7 +266,7 @@ function clearResults() {
 }
 
 function convertStars(score, maxStars, numStars) {
-    // Conerts an n-star system to a 5-star system.
+    // Conerts an n-star system into a 5-star system.
     score = parseFloat(score);
     maxStars = maxStars || 10;
     numStars = numStars || 5;
