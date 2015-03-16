@@ -37,14 +37,15 @@ Generate a Flask secret key and save it as `/secret.txt`. If running on Heroku i
 
 	$ heroku config:set FLASK_SECRET_KEY=your-secret-key-here
 
-### Step 4
 
-Create and migrate the database
+### Step 3.5 (Optional)
+
+If you want to wipe the database and create a new one from scratch, first delete the `app.db` file and the `db_repository` folder. You can then create and migrate the database using:
 
 	$ python db_create.py
 	$ python db_migrate.py
 
-### Step 5
+### Step 4
 
 Run with
 
