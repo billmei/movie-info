@@ -109,24 +109,31 @@ function loadMovieFromOMDb(title, year) {
         } else if (!movie) {
             $('#no-results').slideDown(500);
         } else {
-            displayResults(movie);
+            // This AJAX request uses the separate API to retrieve movie posters
+            // Used to get around the 403 error when code is in production.
+            // $.ajax({
+            //     url: 'http://img.omdbapi.com/?i=' + movie.imdbID + '&apikey=',
+            //     type: 'GET'
+            // }).done(function(poster) {
+            //     showMoviePoster(poster, movie.Title);
+            // });
+            showMovieInfo(movie);
         }
     }).fail(function(movie) {
         alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
     });
 }
 
-function displayResults(movie) {
+function showMovieInfo(movie) {
     // Populates the movie data into the DOM elements on the page
     var result = $('#movie-info');
 
-    if (movie.Poster !== 'N/A') {
-        $('#movie-poster').children().attr('src',movie.Poster).attr('alt',movie.Title);
-    }
+    // Comment out this line when using the separate OMDb API to retrieve movie posters.
+    showMoviePoster(movie.Poster, movie.Title);
 
     if (movie.Title !== 'N/A')      result.children('.title')   .html(movie.Title);
     if (movie.imdbRating !== 'N/A') result.children('.stars')   .html(convertStars(movie.imdbRating));
-    if (movie.Rated !== 'N/A') {    result.children('.rated')   .html("Rated " + movie.Rated);} else {result.children('.rated').html("Unrated");}
+    if (movie.Rated !== 'N/A' && movie.Rated !== 'Not Rated') { result.children('.rated').html("Rated " + movie.Rated);} else {result.children('.rated').html("Unrated");}
     if (movie.Year !== 'N/A')       result.children('.year')    .html("Released " + movie.Year);
     if (movie.Genre !== 'N/A')      result.children('.genre')   .html(movie.Genre);
     if (movie.Plot !== 'N/A')       result.children('.plot')    .html(movie.Plot);
@@ -141,6 +148,12 @@ function displayResults(movie) {
             scrollTop: $('#results-page').offset().top
         },500);
     });
+}
+
+function showMoviePoster(poster, title) {
+    if (poster !== 'N/A') {
+        $('#movie-poster').children().attr('src',poster).attr('alt',title);
+    }
 }
 
 function clearResults() {
