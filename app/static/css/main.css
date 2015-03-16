@@ -230,6 +230,10 @@ body {
     #search-form {
         width: 100%;
     }
+    .headline {
+        margin-top: 75px;
+        margin-bottom: 50px;
+    }
     .form-group {
         display: block;
         margin-top: 1em;
