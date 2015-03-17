@@ -7,7 +7,8 @@ Created for a General Assembly coding challenge.
 - Uses a Python backend to cache results from OMDb so that we don't need to keep fetching data from a third party API. Not only does this improve performance, but the backend also has routes so that the user can hotlink directly to a result once they have seen it. For example, navigating to [http://ga-movie-info.herokuapp.com**/movie/tt0110912/**](http://ga-movie-info.herokuapp.com/movie/tt0110912) takes you directly to a cached results page that doesn't reply on external API calls.
 - Fully responsive on mobile, tablet, and desktop.
 - Social sharing of each result page to Facebook, Twitter, and Google+
-- Tested to work on Chrome, Firefox, and IE
+- Using the back button takes you back to the previous movie you looked up.
+- Tested to work on Chrome, Firefox, and IE.
 - Handles multiple error cases and zero data cases gracefully.
 - I could have used Jinja templates in Flask but I chose to fill in the data with jQuery instead since you guys wanted to see a sample of my JavaScript knowledge.
 

@@ -287,7 +287,7 @@ function convertStars(score, maxStars, numStars) {
     var halfStars = (stars * numStars - filledStars) > 0.4; // Only make a half star if the LSV is > 0.4
     var emptyStars = numStars - filledStars - halfStars;
 
-    result = '';
+    var result = '';
     for (var i = 0; i < filledStars; i++) {
         result += '<i class="fa fa-star"></i>';
     }
