@@ -3,38 +3,77 @@ resizeDiv($('#scrolling-background'), 500);
 resizeDiv($('.transparent-overlay'), 500);
 resizeDiv($('.header-container'), 500);
 
-$(document).ready(function() {
-    $('#search-btn').on('click', function(event) {
-        event.preventDefault();
+(function(){
+    var app = angular.module('movieInfo', []);
 
-        $('#no-results').hide();
-        $('#movie-results').animate({opacity: 0});
+    var movie = {};
 
-        var title = $('#movie-title').val();
-        var year = $('#movie-year').val();
-
-        // Popovers to display validation errors
-        $('#movie-title').popover({'trigger':'manual'});
-        $('#movie-year').popover({'trigger':'manual'});
-        $('#movie-title').on('focus', function() {
-            $(this).popover('destroy');
-        });
-        $('#movie-year').on('focus', function() {
-            $(this).popover('destroy');
-        });
-        if (!validateInput(title, 'is_not_empty')) {
-            $('#movie-title').popover('show');
-            return;
-        }
-        if (!validateInput(+year, 'is_valid_year')) {
-            $('#movie-year').popover('show');
-            return;
-        }
-
-        startLoadingSpinner();
-        searchMovie(title, year);
+    app.controller('MovieController', function(){
+        this.info = movie;
     });
-});
+
+    app.controller('SearchController', ['$http', function($http){
+        this.movie = {};
+
+        this.searchMovie = function() {
+            // Search for a movie based on the title and release year
+            var title = this.movie.title;
+            var year = this.movie.year || "";
+
+            // Clear everything first
+            clearResults();
+            startLoadingSpinner();
+
+            // Fetch from our own database first if the movie exists
+            $http.get('/api/get_movie?movie_title=' + title + '&movie_year=' + year
+            ).success(function(movie) {
+                // Display result
+                if (movie.length === 0) {
+                    // The movie doesn't exist in the database, so we fetch from OMDb
+                    searchMovieFromOMDb(title, year, $http);
+                } else {
+                    // Otherwise fetch it from our own database
+                    handleDatabaseResponse(movie);
+                }
+            }).error(function() {
+                alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
+            });
+        };
+    }]);
+})();
+
+
+// $(document).ready(function() {
+//     $('#search-btn').on('click', function(event) {
+//         event.preventDefault();
+
+//         $('#no-results').hide();
+//         $('#movie-results').animate({opacity: 0});
+
+//         var title = $('#movie-title').val();
+//         var year = $('#movie-year').val();
+
+//         // Popovers to display validation errors
+//         $('#movie-title').popover({'trigger':'manual'});
+//         $('#movie-year').popover({'trigger':'manual'});
+//         $('#movie-title').on('focus', function() {
+//             $(this).popover('destroy');
+//         });
+//         $('#movie-year').on('focus', function() {
+//             $(this).popover('destroy');
+//         });
+//         if (!validateInput(title, 'is_not_empty')) {
+//             $('#movie-title').popover('show');
+//             return;
+//         }
+//         if (!validateInput(+year, 'is_valid_year')) {
+//             $('#movie-year').popover('show');
+//             return;
+//         }
+
+//         searchMovie(title, year);
+//     });
+// });
 
 function buildHeaderBackground(containerHeight, rowHeight, minRows) {
     // Creates the wall of movie-posters in the background that is animated via CSS.
@@ -95,6 +134,7 @@ function loadMovie(imdb_id) {
             loadMovieFromOMDb(imdb_id);
         } else {
             // Otherwise fetch it from our own database
+            movie = JSON.parse(movie);
             handleDatabaseResponse(movie);
         }
     }).fail(function() {
@@ -103,38 +143,11 @@ function loadMovie(imdb_id) {
 
 }
 
-function searchMovie(title, year) {
-    // Search for a movie based on the title and release year
-
-    // Clear everything first
-    clearResults();
-
-    // Fetch from our own database first if the movie exists
-    $.ajax({
-        url: '/api/get_movie',
-        type: 'GET',
-        data: {
-            movie_title: title,
-            movie_year: year
-        }
-    }).done(function(movie) {
-        // Display result
-        if (movie.length === 0) {
-            // The movie doesn't exist in the database, so we fetch from OMDb
-            searchMovieFromOMDb(title, year);
-        } else {
-            // Otherwise fetch it from our own database
-            handleDatabaseResponse(movie);
-        }
-    }).fail(function() {
-        alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
-    });
-}
 
 function handleDatabaseResponse(response) {
     // Handle the data passed back from our database
     stopLoadingSpinner();
-    showMovieInfo(JSON.parse(response));
+    showMovieInfo(response);
 }
 
 function loadMovieFromOMDb(imdb_id) {
@@ -143,6 +156,7 @@ function loadMovieFromOMDb(imdb_id) {
         url: 'http://www.omdbapi.com/?i=' + imdb_id,
         type: 'GET',
     }).done(function(response) {
+        response = JSON.parse(response);
         handleOMDbResponse(response);
     })
     .fail(function() {
@@ -151,21 +165,19 @@ function loadMovieFromOMDb(imdb_id) {
     
 }
 
-function searchMovieFromOMDb(title, year) {
+function searchMovieFromOMDb(title, year, $http) {
     // Fetches movie information by title and year from OMDb (http://www.omdbapi.com/)
-    $.ajax({
-        url: 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json',
-        type: 'GET'
-    }).done(function(response) {
+    $http.get('http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json'
+    ).success(function(response) {
         handleOMDbResponse(response);
-    }).fail(function() {
+    }).error(function() {
         alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
     });
 }
 
 function handleOMDbResponse(response) {
     // Handles the response from OMDb, displaying error messages if necessary.
-    var movie = JSON.parse(response);
+    var movie = response;
 
     stopLoadingSpinner();
 

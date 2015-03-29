@@ -13,7 +13,7 @@ Created for a General Assembly coding challenge.
 
 ## Installation Instructions
 
-Python Version 3.3.1
+Python Version 3.4.0
 
 Flask Version 0.10.1
 

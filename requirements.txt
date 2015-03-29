@@ -6,7 +6,6 @@ SQLAlchemy==1.0.0b1
 Tempita==0.5.3dev
 Werkzeug==0.10.1
 decorator==3.4.0
-distribute==0.6.34
 gunicorn==19.3.0
 itsdangerous==0.24
 pbr==0.10.8
