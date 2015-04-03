@@ -191,19 +191,16 @@ function handleOMDbResponse(response) {
     } else {
         // This AJAX request uses the separate API to retrieve movie posters.
         // Used to get around the 403 error when code is in production.
-        // TODO: OMDb hasn't emailed me my API key yet, I have to set this up when they reply to me.
-        // TODO: Fetch the API key using Python from the backend, and store the API key in an environment variable.
-        // $.ajax({
-        //     url: 'http://img.omdbapi.com/?i=' + movie.imdbID + '&apikey=',
-        //     type: 'GET'
-        // }).done(function(poster) {
-        //     showMoviePoster(poster, movie.Title);
-        // });
-
-        // Show the movie information
-        showMovieInfo(movie);
-        // Cache the result in our database so that we don't have to call the OMDb API again.
-        cacheMovie(movie);
+        $.ajax({
+            url: '/api/get_poster?imdb_id=' + movie.imdbID,
+            type: 'GET'
+        }).done(function(posterURI) {
+            movie.Poster = posterURI;
+            // Show the movie information
+            showMovieInfo(movie);
+            // Cache the result in our database so that we don't have to call the OMDb API again.
+            cacheMovie(movie);
+        });
     }
 }
 
@@ -235,9 +232,7 @@ function showMovieInfo(movie) {
 
     window.history.pushState(null, null, '/movie/' + movie.imdbID);
 
-    // Comment out this line when using the separate OMDb API to retrieve movie posters.
     showMoviePoster(movie.Poster, movie.Title);
-
     if (movie.Title !== 'N/A')      result.children('.title')   .html(movie.Title);
     if (movie.imdbRating !== 'N/A') result.children('.stars')   .html(convertStars(movie.imdbRating));
     if (movie.Rated !== 'N/A' && movie.Rated !== 'Not Rated') { result.children('.rated').html("Rated " + movie.Rated);} else {result.children('.rated').html("Unrated");}
@@ -268,10 +263,10 @@ function showMovieInfo(movie) {
     });
 }
 
-function showMoviePoster(poster, title) {
+function showMoviePoster(posterURI, title) {
     // Displays the movie poster in the results
-    if (poster !== 'N/A') {
-        $('#movie-poster').children('img').attr('src',poster).attr('alt',title);
+    if (posterURI !== '') {
+        $('#movie-poster').children('img').attr('src',posterURI).attr('alt',title);
     }
 }
 

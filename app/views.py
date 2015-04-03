@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, send_file
 from app import app
 from app import api
 
@@ -29,12 +29,16 @@ def api_get_movie():
 def api_get_movie_by_id():
     """Get movie by IMDB ID"""
     result = api.get_movie_by_id(
-        request.args.get('imdb_id', '')
-        )
+        request.args.get('imdb_id', ''))
     if result:
         return result
     else:
         return ''
+
+@app.route('/api/get_poster', methods=['GET'])
+def api_get_poster():
+    """Get the URI of a movie poster by IMDB ID"""
+    return api.get_poster(request.args.get('imdb_id', '')) or ''
 
 @app.route('/movie/<imdb_id>', methods=['GET'])
 def render_movie_page(imdb_id):

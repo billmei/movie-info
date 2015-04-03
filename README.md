@@ -35,6 +35,10 @@ Generate a Flask secret key and save it as `/secret.txt` in the root folder. If 
 
 	$ heroku config:set FLASK_SECRET_KEY=your-secret-key-here
 
+You also need to get an [OMDB Poster API key](http://beforethecode.com/projects/omdb/apikey.aspx) and save it as `/omdb_api_key.txt`. Again, you also need to set the environment varaible if you are running on Heroku:
+
+	$ heroku config:set OMDB_API_KEY=your-api-key-here
+	
 
 ### Step 3.5 (Optional)
 

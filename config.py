@@ -13,5 +13,14 @@ except NameError:
     except IOError:
         SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 
+try:
+    OMDB_API_KEY
+except NameError:
+    OMDB_SECRET_FILE = os.path.join(PROJECT_DIR, 'omdb_api_key.txt')
+    try:
+        OMDB_API_KEY = open(OMDB_SECRET_FILE).read().strip()
+    except IOError:
+        OMDB_API_KEY = os.environ.get('OMDB_API_KEY')
+
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PROJECT_DIR, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(PROJECT_DIR, 'db_repository')

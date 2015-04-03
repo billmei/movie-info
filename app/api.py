@@ -1,4 +1,6 @@
 from app import db, models
+import requests
+from config import OMDB_API_KEY
 import json
 
 def cache_movie(movie):
@@ -52,3 +54,15 @@ def get_movie_by_id(imdb_id):
         return m.movie_data
     else:
         return None
+
+def get_poster(imdb_id):
+    """
+    Builds the URI of a movie poster by imdb_id
+    from the OMDB Poster API
+    """
+    uri = 'http://img.omdbapi.com/?i=' + imdb_id + '&apikey=' + OMDB_API_KEY
+    r = requests.get(uri)
+    if r.status_code == 404 or r.status_code == 500:
+        return None
+    else:
+        return uri
