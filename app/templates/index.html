@@ -9,7 +9,7 @@
     </div>        
   </div>
   <div class="row">
-    <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.searchMovie()" novalidate>
+    <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.validateInput() && searchCtrl.searchMovie()" novalidate>
       <div class="form-group">
         <label for="movie-title">Movie Title</label>
         <input ng-model="searchCtrl.movie.title" type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Please enter the title of a movie.">

@@ -18,7 +18,7 @@ resizeDiv($('.header-container'), 500);
         this.searchMovie = function() {
             // Search for a movie based on the title and release year
             var title = this.movie.title;
-            var year = this.movie.year || "";
+            var year = this.movie.year || '';
 
             // Clear everything first
             clearResults();
@@ -39,41 +39,40 @@ resizeDiv($('.header-container'), 500);
                 alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
             });
         };
+
+        this.validateInput = function() {
+            $('#no-results').hide();
+            $('#movie-results').animate({opacity: 0});
+
+            var title = this.movie.title;
+            var year = this.movie.year || '';
+
+            if (!isValidInput(title, 'is_not_empty')) {
+                $('#movie-title').popover('show');
+                return false;
+            }
+            if (!isValidInput(+year, 'is_valid_year')) {
+                $('#movie-year').popover('show');
+                return false;
+            }
+
+            $('#movie-title').popover('destroy');
+            $('#movie-year').popover('destroy');
+
+            return true;
+        };
     }]);
+    
+    // Popovers to display validation errors
+    $('#movie-title').popover({'trigger':'manual'});
+    $('#movie-year').popover({'trigger':'manual'});
+    $('#movie-title').on('focus', function() {
+        $(this).popover('destroy');
+    });
+    $('#movie-year').on('focus', function() {
+        $(this).popover('destroy');
+    });
 })();
-
-
-// $(document).ready(function() {
-//     $('#search-btn').on('click', function(event) {
-//         event.preventDefault();
-
-//         $('#no-results').hide();
-//         $('#movie-results').animate({opacity: 0});
-
-//         var title = $('#movie-title').val();
-//         var year = $('#movie-year').val();
-
-//         // Popovers to display validation errors
-//         $('#movie-title').popover({'trigger':'manual'});
-//         $('#movie-year').popover({'trigger':'manual'});
-//         $('#movie-title').on('focus', function() {
-//             $(this).popover('destroy');
-//         });
-//         $('#movie-year').on('focus', function() {
-//             $(this).popover('destroy');
-//         });
-//         if (!validateInput(title, 'is_not_empty')) {
-//             $('#movie-title').popover('show');
-//             return;
-//         }
-//         if (!validateInput(+year, 'is_valid_year')) {
-//             $('#movie-year').popover('show');
-//             return;
-//         }
-
-//         searchMovie(title, year);
-//     });
-// });
 
 function buildHeaderBackground(containerHeight, rowHeight, minRows) {
     // Creates the wall of movie-posters in the background that is animated via CSS.
@@ -97,7 +96,7 @@ function resizeDiv(div, minHeight) {
     }
 }
 
-function validateInput(input, condition) {
+function isValidInput(input, condition) {
     // Ensures the movie title is not blank and the year entered is reasonable
     switch (condition) {
         case undefined:
@@ -142,7 +141,6 @@ function loadMovie(imdb_id) {
     });    
 
 }
-
 
 function handleDatabaseResponse(response) {
     // Handle the data passed back from our database
