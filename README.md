@@ -22,10 +22,10 @@ Flask Version 0.10.1
 
 ### Step 2
 
-Install `virtualenv` and app requirements (use the `--no-site-packages` flag for Ubuntu versions):
+Install `virtualenv` and app requirements:
 
 	$ pip install virtualenv
-	$ virtualenv -p python3 venv --no-site-packages
+	$ virtualenv -p python3 venv
 	$ source venv/bin/activate
 	$ pip install -r requirements.txt
 

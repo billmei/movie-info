@@ -62,7 +62,7 @@ def get_poster(imdb_id):
     """
     uri = 'http://img.omdbapi.com/?i=' + imdb_id + '&apikey=' + OMDB_API_KEY
     r = requests.get(uri)
-    if r.status_code == 404 or r.status_code == 500:
+    if r.status_code == 404 or r.status_code == 500 or r.status_code == 403:
         return None
     else:
         return uri
