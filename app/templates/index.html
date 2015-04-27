@@ -41,22 +41,34 @@
           <div class="vertical-space visible-xs"></div>
           <ul id="movie-info">
             <!-- Top Area -->
-            <li class="title"></li>
+            <li class="title">{[movie.info.Title]}</li>
             <li class="rated label label-default"></li>
             <li class="divider"></li>
-            <li class="stars"></li>
-            <li class="year"></li>
-            <li class="genre"></li>
+            <li class="stars">{[movie.info.Stars]}</li>
+            <li class="year">Released {[movie.info.Year]}</li>
+            <li class="genre">{[movie.info.Genre]}</li>
 
             <!-- Middle Area -->
-            <li class="plot"></li>
+            <li class="plot">{[movie.info.Plot]}</li>
 
             <!-- Bottom Area -->
-            <li class="runtime"></li>
-            <li class="director"></li>
-            <li class="actors"></li>
-            <li class="writer"></li>
-            <li class="awards"></li>
+            <li class="runtime">Runtime {[movie.info.Runtime]}</li>
+            <li class="director">
+              <span class="movie-label"><!-- Pluralize --></span>
+              <p>{[movie.info.Director]}</p>
+            </li>
+            <li class="actors">
+              <span class="movie-label"><!-- Pluralize --></span>
+              <p>{[movie.info.Actors]}</p>
+            </li>
+            <li class="writer">
+              <span class="movie-label"><!-- Pluralize --></span>
+              <p>{[movie.info.Writer]}</p>
+            </li>
+            <li class="awards">
+              <span class="movie-label">Awards: </span>
+              <p>{[movie.info.Awards]}</p>
+            </li>
           </ul>
         </div>
       </div>

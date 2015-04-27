@@ -1,4 +1,4 @@
-buildHeaderBackground($(window).height(), 100, 5);
+// buildHeaderBackground($(window).height(), 100, 5);
 resizeDiv($('#scrolling-background'), 500);
 resizeDiv($('.transparent-overlay'), 500);
 resizeDiv($('.header-container'), 500);
@@ -6,14 +6,36 @@ resizeDiv($('.header-container'), 500);
 (function(){
     var app = angular.module('movieInfo', []);
 
+    // Resolve conflict between Jinja2 tags and Angular tags
+    // Jinja2 uses {{}} so make Angular use {[]}
+    app.config(['$interpolateProvider', function($interpolateProvider) {
+        $interpolateProvider.startSymbol('{[');
+        $interpolateProvider.endSymbol(']}');
+    }]);
+
     var movie = {};
 
-    app.controller('MovieController', function(){
-        this.info = movie;
+    app.service('movieService', function() {
+        var movie = {};
+
+        var getMovie = function() {
+            return movie;
+        };
+
+        var setMovie = function(newMovie) {
+            movie = newMovie;
+        };
+
+        return {
+            getMovie: getMovie,
+            setMovie: setMovie
+        };
     });
 
-    app.controller('SearchController', ['$http', function($http){
-        this.movie = {};
+
+    app.controller('SearchController', ['$scope', '$http', 'movieService',
+        function($scope, $http, movieService) {
+        this.movie = movieService.getMovie();
 
         this.searchMovie = function() {
             // Search for a movie based on the title and release year
@@ -30,11 +52,14 @@ resizeDiv($('.header-container'), 500);
                 // Display result
                 if (movie.length === 0) {
                     // The movie doesn't exist in the database, so we fetch from OMDb
-                    searchMovieFromOMDb(title, year, $http);
+                    movie = searchMovieFromOMDb(title, year, $http);
+                    handleOMDbResponse(movie);
                 } else {
                     // Otherwise fetch it from our own database
                     handleDatabaseResponse(movie);
+                    // TODO: Assign result to the variable movie
                 }
+
             }).error(function() {
                 alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
             });
@@ -60,6 +85,15 @@ resizeDiv($('.header-container'), 500);
             $('#movie-year').popover('destroy');
 
             return true;
+        };
+    }]);
+
+    app.controller('MovieController', ['$scope', 'movieService',
+        function($scope, movieService){
+        this.info = movie;
+        // TODO: Put everything into angular templating language
+        this.convertStars = function() {
+            return;
         };
     }]);
     
@@ -167,9 +201,10 @@ function searchMovieFromOMDb(title, year, $http) {
     // Fetches movie information by title and year from OMDb (http://www.omdbapi.com/)
     $http.get('http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json'
     ).success(function(response) {
-        handleOMDbResponse(response);
+        return response;
     }).error(function() {
         alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+        return null;
     });
 }
 
@@ -259,7 +294,7 @@ function showMovieInfo(movie) {
     $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
         $('html,body').animate({
             scrollTop: $('#results-page').offset().top
-        },500);
+        }, 500);
     });
 }
 
