@@ -1,4 +1,4 @@
-from flask import render_template, request, send_file
+from flask import render_template, request, Response, abort
 from app import app
 from app import api
 
@@ -21,9 +21,9 @@ def api_get_movie():
         request.args.get('movie_year', '')
         )
     if result:
-        return result
+        return Response(result, mimetype='application/json')
     else:
-        return ''
+        abort(504)
 
 @app.route('/api/get_movie_by_id', methods=['GET'])
 def api_get_movie_by_id():
@@ -31,9 +31,9 @@ def api_get_movie_by_id():
     result = api.get_movie_by_id(
         request.args.get('imdb_id', ''))
     if result:
-        return result
+        return Response(result, mimetype='application/json')
     else:
-        return ''
+        abort(504)
 
 @app.route('/api/get_poster', methods=['GET'])
 def api_get_poster():
