@@ -13,34 +13,33 @@ resizeDiv($('.header-container'), 500);
         $interpolateProvider.endSymbol(']}');
     }]);
 
-    var movie = {};
-
-    app.service('movieService', function() {
-        var movie = {};
-
-        var getMovie = function() {
-            return movie;
-        };
-
-        var setMovie = function(newMovie) {
-            movie = newMovie;
-        };
-
+    app.factory('MovieService', function() {
         return {
-            getMovie: getMovie,
-            setMovie: setMovie
+            'movie' : {
+                'Title' : '',
+                'Year' : '',
+                'Stars' : '',
+                'Genre' : '',
+                'Plot' : '',
+                'Runtime' : '',
+                'Director' : '',
+                'Actors' : '',
+                'Writer' : '',
+                'Awards' : ''
+            }
         };
     });
 
 
-    app.controller('SearchController', ['$scope', '$http', 'movieService',
-        function($scope, $http, movieService) {
-        this.movie = movieService.getMovie();
+    app.controller('SearchController', ['$rootScope', '$http', 'MovieService',
+        function($rootScope, $http, MovieService) {
+
+        $rootScope.movie = MovieService.movie;
 
         this.searchMovie = function() {
             // Search for a movie based on the title and release year
-            var title = this.movie.title;
-            var year = this.movie.year || '';
+            var title = $rootScope.movie.Title;
+            var year = $rootScope.movie.Year || '';
 
             // Clear everything first
             clearResults();
@@ -50,13 +49,36 @@ resizeDiv($('.header-container'), 500);
             $http.get('/api/get_movie?movie_title=' + title + '&movie_year=' + year
             ).success(function(movie) {
                 // Display result
+                // movie = searchMovieFromOMDb(title, year, $http);
+
+
+                // TODO: This needs to be a python function
+                $http.get('http://www.omdbapi.com/?t=' + title + '&y=' + year + '&plot=full&r=json'
+                ).success(function(response) {
+
+                    $rootScope.movie = response;
+
+                    $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
+                        $('html,body').animate({
+                            scrollTop: $('#results-page').offset().top
+                        }, 500);
+                    });
+
+
+                }).error(function() {
+                    alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+                    $rootScope.movie = null;
+                });
+
+
+
                 if (movie.length === 0) {
                     // The movie doesn't exist in the database, so we fetch from OMDb
-                    movie = searchMovieFromOMDb(title, year, $http);
-                    handleOMDbResponse(movie);
+                    // movie = searchMovieFromOMDb(title, year, $http);
+                    // handleOMDbResponse(movie);
                 } else {
                     // Otherwise fetch it from our own database
-                    handleDatabaseResponse(movie);
+                    // handleDatabaseResponse(movie);
                     // TODO: Assign result to the variable movie
                 }
 
@@ -69,8 +91,8 @@ resizeDiv($('.header-container'), 500);
             $('#no-results').hide();
             $('#movie-results').animate({opacity: 0});
 
-            var title = this.movie.title;
-            var year = this.movie.year || '';
+            var title = $rootScope.movie.Title;
+            var year = $rootScope.movie.Year || '';
 
             if (!isValidInput(title, 'is_not_empty')) {
                 $('#movie-title').popover('show');
@@ -88,12 +110,48 @@ resizeDiv($('.header-container'), 500);
         };
     }]);
 
-    app.controller('MovieController', ['$scope', 'movieService',
-        function($scope, movieService){
-        this.info = movie;
+    app.controller('MovieController', ['$scope', '$rootScope', 'MovieService',
+        function($scope, $rootScope, MovieService){
+        $rootScope.movie = MovieService.movie;
+        this.movie = {};
+        var self = this;
+
+        $rootScope.$watch(function() {
+            return $rootScope.movie.Title;
+        }, function() {
+            self.movie = $rootScope.movie;
+            self.movie.parsedRated = self.getRating();
+            self.movie.parsedStars = self.getStars(self.movie.imdbRating);
+        });
+
         // TODO: Put everything into angular templating language
-        this.convertStars = function() {
+        this.getRating = function() {
             return;
+        };
+
+        this.getStars = function(score, maxStars, numStars) {
+            // Conerts an n-star system into a 5-star system.
+            score = parseFloat(score);
+            maxStars = maxStars || 10;
+            numStars = numStars || 5;
+
+            var stars = score / maxStars;
+
+            var filledStars = Math.floor(stars * numStars);
+            var halfStars = (stars * numStars - filledStars) > 0.4; // Only make a half star if the LSV is > 0.4
+            var emptyStars = numStars - filledStars - halfStars;
+
+            var result = '';
+            for (var i = 0; i < filledStars; i++) {
+                result += '<i class="fa fa-star"></i>';
+            }
+            if (halfStars) {
+                result += '<i class="fa fa-star-half-o"></i>';
+            }
+            for (var j = 0; j < emptyStars; j++) {
+                result += '<i class="fa fa-star-o"></i>';
+            }
+            return result;
         };
     }]);
     
@@ -307,37 +365,12 @@ function showMoviePoster(posterURI, title) {
 
 function clearResults() {
     // Clears movie data from the DOM elements in the page
-    $('#movie-poster').children('img').attr('src','/static/img/no_poster.png').attr('alt','No movie poster available');
-    $('#movie-info').children().html('');
-    $('.ssk-facebook').attr('href','');
-    $('.ssk-twitter').attr('href','');
-    $('.ssk-google-plus').attr('href','');
+    // $('#movie-poster').children('img').attr('src','/static/img/no_poster.png').attr('alt','No movie poster available');
+    // $('#movie-info').children().html('');
+    // $('.ssk-facebook').attr('href','');
+    // $('.ssk-twitter').attr('href','');
+    // $('.ssk-google-plus').attr('href','');
 
-}
-
-function convertStars(score, maxStars, numStars) {
-    // Conerts an n-star system into a 5-star system.
-    score = parseFloat(score);
-    maxStars = maxStars || 10;
-    numStars = numStars || 5;
-
-    var stars = score / maxStars;
-
-    var filledStars = Math.floor(stars * numStars);
-    var halfStars = (stars * numStars - filledStars) > 0.4; // Only make a half star if the LSV is > 0.4
-    var emptyStars = numStars - filledStars - halfStars;
-
-    var result = '';
-    for (var i = 0; i < filledStars; i++) {
-        result += '<i class="fa fa-star"></i>';
-    }
-    if (halfStars) {
-        result += '<i class="fa fa-star-half-o"></i>';
-    }
-    for (var j = 0; j < emptyStars; j++) {
-        result += '<i class="fa fa-star-o"></i>';
-    }
-    return result;
 }
 
 function pluralize(role, people) {

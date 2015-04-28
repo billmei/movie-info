@@ -12,11 +12,11 @@
     <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.validateInput() && searchCtrl.searchMovie()" novalidate>
       <div class="form-group">
         <label for="movie-title">Movie Title</label>
-        <input ng-model="searchCtrl.movie.title" type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Please enter the title of a movie.">
+        <input ng-model="movie.Title" type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Please enter the title of a movie.">
       </div>
       <div class="form-group">
         <label for="movie-year">Release Year</label>
-        <input ng-model="searchCtrl.movie.year" type="text" class="form-control" id="movie-year" placeholder="(Optional)" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Hmmm that year doesn't seem right.">
+        <input ng-model="movie.Year" type="text" class="form-control" id="movie-year" placeholder="(Optional)" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Hmmm that year doesn't seem right.">
       </div>
       <div class="form-group">
         <i class="fa fa-spin fa-spinner fa-lg loading-spinner"></i>
@@ -28,7 +28,7 @@
 <div id="results-page" class="container">
   <div class="row">
     <div class="col-xs-12 col-md-8 col-md-offset-2">
-      <div id="movie-results" class="row" ng-controller="MovieController as movie">
+      <div id="movie-results" class="row" ng-controller="MovieController as movieCtrl">
         <div id="movie-poster" class="col-xs-12 col-sm-5">
           <img src="" alt="">
           <ul class="share-links">
@@ -41,33 +41,33 @@
           <div class="vertical-space visible-xs"></div>
           <ul id="movie-info">
             <!-- Top Area -->
-            <li class="title">{[movie.info.Title]}</li>
-            <li class="rated label label-default"></li>
+            <li class="title">{[movieCtrl.movie.Title]}</li>
+            <li class="rated label label-default">{[movieCtrl.movie.parsedRated]}</li>
             <li class="divider"></li>
-            <li class="stars">{[movie.info.Stars]}</li>
-            <li class="year">Released {[movie.info.Year]}</li>
-            <li class="genre">{[movie.info.Genre]}</li>
+            <li class="stars">{[movieCtrl.movie.parsedStars]}</li>
+            <li class="year">Released {[movieCtrl.movie.Year]}</li>
+            <li class="genre">{[movieCtrl.movie.Genre]}</li>
 
             <!-- Middle Area -->
-            <li class="plot">{[movie.info.Plot]}</li>
+            <li class="plot">{[movieCtrl.movie.Plot]}</li>
 
             <!-- Bottom Area -->
-            <li class="runtime">Runtime {[movie.info.Runtime]}</li>
+            <li class="runtime">Runtime {[movieCtrl.movie.Runtime]}</li>
             <li class="director">
               <span class="movie-label"><!-- Pluralize --></span>
-              <p>{[movie.info.Director]}</p>
+              <p>{[movieCtrl.movie.Director]}</p>
             </li>
             <li class="actors">
               <span class="movie-label"><!-- Pluralize --></span>
-              <p>{[movie.info.Actors]}</p>
+              <p>{[movieCtrl.movie.Actors]}</p>
             </li>
             <li class="writer">
               <span class="movie-label"><!-- Pluralize --></span>
-              <p>{[movie.info.Writer]}</p>
+              <p>{[movieCtrl.movie.Writer]}</p>
             </li>
             <li class="awards">
               <span class="movie-label">Awards: </span>
-              <p>{[movie.info.Awards]}</p>
+              <p>{[movieCtrl.movie.Awards]}</p>
             </li>
           </ul>
         </div>
