@@ -90,6 +90,7 @@ resizeDiv($('.header-container'), 500);
         $rootScope.$watch(function() {
             return $rootScope.movie.title;
         }, function() {
+            // TODO: Handle case when we don't get a response from the server
             self.movie = $rootScope.movie;
             self.movie.parsedRated = self.getRating();
             self.movie.parsedStars = self.getStars(self.movie.imdbRating);
