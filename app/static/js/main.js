@@ -1,6 +1,5 @@
 (function(){
-    // TODO: Uncomment this.
-    // buildHeaderBackground($(window).height(), 100, 5);
+    buildHeaderBackground($(window).height(), 100, 5);
     resizeDiv($('#scrolling-background'), 500);
     resizeDiv($('.transparent-overlay'), 500);
     resizeDiv($('.header-container'), 500);
@@ -20,39 +19,44 @@
         };
     });
 
-
     app.controller('SearchController', ['$rootScope', '$http', 'MovieService',
         function($rootScope, $http, MovieService) {
         $rootScope.movie = MovieService.movie;
         var self = this;
 
-        this.searchMovie = function() {
-            // Validate results
-
+        this.searchMovie = function(imdb_id) {
             $('#no-results').hide();
             $('#movie-results').animate({opacity: 0}, 200, 'linear', function() {
-                var title = $rootScope.movie.input_title;
-                var year = $rootScope.movie.input_year || '';
+                var serverURL;
 
-                if (!self.isValidInput(title, 'is_not_empty')) {
-                    $('#movie-title').popover('show');
-                    return;
+                if (imdb_id) {
+                    serverURL = '/api/get_movie?imdb_id=' + imdb_id;
+                } else {
+                    var title = $rootScope.movie.input_title;
+                    var year = $rootScope.movie.input_year || '';
+
+                    // Validate results
+                    if (!self.isValidInput(title, 'is_not_empty')) {
+                        $('#movie-title').popover('show');
+                        return;
+                    }
+                    if (!self.isValidInput(+year, 'is_valid_year')) {
+                        $('#movie-year').popover('show');
+                        return;
+                    }
+
+                    $('#movie-title').popover('destroy');
+                    $('#movie-year').popover('destroy');
+                    serverURL = '/api/get_movie?movie_title=' + title + '&movie_year=' + year;
+
+                    // Results are valid, go ahead and search
+                    startLoadingSpinner();
                 }
-                if (!self.isValidInput(+year, 'is_valid_year')) {
-                    $('#movie-year').popover('show');
-                    return;
-                }
-
-                $('#movie-title').popover('destroy');
-                $('#movie-year').popover('destroy');
-
-                // Results are valid, go ahead and search
-                startLoadingSpinner();
 
                 // Search for the movie
-                $http.get('/api/get_movie?movie_title=' + title + '&movie_year=' + year
+                $http.get(serverURL
                 ).success(function(response) {
-
+                    // TODO: Store the poster image as a file on the server filesystem rather than passing a URI string.
                     $rootScope.movie = response;
 
                 }).error(function(error_code) {
@@ -215,38 +219,6 @@
         if ($(window).height() > minHeight) {
             div.css('height', $(window).height());
         }
-    }
-
-    function loadMovie(imdb_id) {
-        // Search for a movie based on the imdb_id
-        if (!imdb_id || imdb_id.length === 0) {
-            return;
-        }
-
-        // Clear everything first
-        clearResults();
-
-        // Fetch from our own database first if the movie exists
-        $.ajax({
-            url: '/api/get_movie_by_id',
-            type: 'GET',
-            data: {
-                imdb_id: imdb_id
-            }
-        }).done(function(movie) {
-            // Display result
-            if (movie.length === 0) {
-                // The movie doesn't exist in the database, so we fetch from OMDb
-                loadMovieFromOMDb(imdb_id);
-            } else {
-                // Otherwise fetch it from our own database
-                movie = JSON.parse(movie);
-                handleDatabaseResponse(movie);
-            }
-        }).fail(function() {
-            alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
-        });    
-
     }
 
     function scrollToResults() {

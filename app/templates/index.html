@@ -9,10 +9,10 @@
     </div>        
   </div>
   <div class="row">
-    <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.searchMovie()" novalidate>
+    <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.searchMovie()" ng-init="searchCtrl.searchMovie('{{imdb_id}}')" novalidate>
       <div class="form-group">
         <label for="movie-title">Movie Title</label>
-        <input ng-model="movie.input_title" type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Please enter the title of a movie.">
+        <input ng-model="movie.input_title" type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Enter the title of a movie.">
       </div>
       <div class="form-group">
         <label for="movie-year">Release Year</label>
