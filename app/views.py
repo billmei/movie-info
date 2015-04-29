@@ -1,6 +1,6 @@
 from flask import render_template, request, Response, abort
 from app import app
-from app import api
+from app import movie_info
 
 # Templates
 @app.route('/', methods=['GET'])
@@ -16,7 +16,7 @@ def render_movie_page(imdb_id):
 @app.route('/api/get_movie', methods=['GET'])
 def api_get_movie():
     """Get movie by title and year"""
-    result = api.get_movie(
+    result = movie_info.get_movie(
         request.args.get('movie_title', None),
         request.args.get('movie_year', None),
         request.args.get('imdb_id', None)
