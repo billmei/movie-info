@@ -17,19 +17,10 @@ def api_cache_movie():
 def api_get_movie():
     """Get movie by title and year"""
     result = api.get_movie(
-        request.args.get('movie_title', ''),
-        request.args.get('movie_year', '')
+        request.args.get('movie_title', None),
+        request.args.get('movie_year', None),
+        request.args.get('imdb_id', None)
         )
-    if result:
-        return Response(result, mimetype='application/json')
-    else:
-        abort(504)
-
-@app.route('/api/get_movie_by_id', methods=['GET'])
-def api_get_movie_by_id():
-    """Get movie by IMDB ID"""
-    result = api.get_movie_by_id(
-        request.args.get('imdb_id', ''))
     if result:
         return Response(result, mimetype='application/json')
     else:

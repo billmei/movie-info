@@ -32,59 +32,49 @@ def get_poster(imdb_id):
     else:
         return uri
 
-def get_movie(title, year=None):
+def get_movie(title, year=None, imdb_id=None):
     """
-    Retrieves movies from the database by title and year.
+    Retrieves movies from the database by title and year, or IMDB id.
     Automatically tries to fetch from the OMDB API if the movie does not
     exist in the database.
     """
-    title = title.lower()
 
-    if len(year) == 0 or not year:
-        movie = models.Movie.query.filter_by(
-            title=title).order_by(
-            models.Movie.year.desc()).first()
+    if imdb_id:
+        movie = models.Movie.query.filter_by(imdb_id=imdb_id).first()
+
     else:
-        movie = models.Movie.query.filter_by(
-            title=title).filter_by(
-            year=year).first()
+        title = title.lower()
+
+        if len(year) == 0 or not year:
+            movie = models.Movie.query.filter_by(
+                title=title).order_by(
+                models.Movie.year.desc()).first()
+        else:
+            movie = models.Movie.query.filter_by(
+                title=title).filter_by(
+                year=year).first()
 
     if movie:
         # Fetch from the database
         return movie.movie_data
     else:
         # Otherwise fetch from OMDB
-        movie = search_omdb(title, year)
+        movie = search_omdb(title, year, imdb_id)
         if movie:
             cache_movie(movie)
             return json.dumps(movie)
 
         return None
 
-def get_movie_by_id(imdb_id):
-    """
-    Retrieves movies from the database by IMDB id.
-    Returns None if the movie does not exist in the database.
-    """
-
-    movie = models.Movie.query.filter_by(imdb_id=imdb_id).first()
-    if movie:
-        return movie.movie_data
-    else:
-        # Otherwise fetch from OMDB
-        movie = search_omdb_by_id(imdb_id)
-        if movie:
-            cache_movie(movie)
-            return json.dumps(movie)
-
-        return None
-
-def search_omdb(title, year):
+def search_omdb(title, year=None, imdb_id=None):
     """
     Retrieves a movie from the OMDB API
     """
     try:
-        movie = omdb.get(title=title, year=year, fullplot=True)
+        if imdb_id:
+            movie = omdb.imdbid(imdb_id, fullplot=True)
+        else:
+            movie = omdb.get(title=title, year=year, fullplot=True)
     except requests.exceptions.HTTPError:
         return None
 

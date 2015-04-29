@@ -215,21 +215,6 @@ function scrollToResults() {
     stopLoadingSpinner();
 }
 
-function loadMovieFromOMDb(imdb_id) {
-    // Fetches movie information by imdb_id from OMDb (http://www.omdbapi.com/)
-    $.ajax({
-        url: 'http://www.omdbapi.com/?i=' + imdb_id,
-        type: 'GET',
-    }).done(function(response) {
-        response = JSON.parse(response);
-        handleOMDbResponse(response);
-    })
-    .fail(function() {
-        alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-    });
-    
-}
-
 function handleOMDbResponse(response) {
     // Handles the response from OMDb, displaying error messages if necessary.
     var movie = response;
