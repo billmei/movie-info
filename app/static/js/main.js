@@ -98,7 +98,6 @@ resizeDiv($('.header-container'), 500);
             } else if (!self.movie) {
                 $('#no-results').slideDown(500);
             } else {
-                // TODO: retrieve movie poster
                 self.movie.parsedRated = self.getRating();
                 self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
                 self.movie.parsedDirectors = self.getRole("Director", self.movie.director);
@@ -268,14 +267,6 @@ function showMovieInfo(movie) {
         }, 500);
     });
 }
-
-function showMoviePoster(posterURI, title) {
-    // Displays the movie poster in the results
-    if (posterURI !== '') {
-        $('#movie-poster').children('img').attr('src',posterURI).attr('alt',title);
-    }
-}
-
 
 function alertModal(title, body) {
     // Display error message to the user in a modal

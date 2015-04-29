@@ -61,6 +61,7 @@ def get_movie(title, year=None, imdb_id=None):
         # Otherwise fetch from OMDB
         movie = search_omdb(title, year, imdb_id)
         if movie:
+            movie.poster = get_poster(movie.imdb_id)
             cache_movie(movie)
             return json.dumps(movie)
 
