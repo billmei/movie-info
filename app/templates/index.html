@@ -28,6 +28,9 @@
 <div id="results-page" class="container">
   <div class="row">
     <div class="col-xs-12 col-md-8 col-md-offset-2">
+      <div id="no-results" class="text-muted">
+        No results found :(
+      </div>
       <div id="movie-results" class="row" ng-controller="MovieController as movieCtrl">
         <div id="movie-poster" class="col-xs-12 col-sm-5">
           <img ng-src="{[movieCtrl.movie.poster ? movieCtrl.movie.poster : '/static/img/no_poster.png']}" alt="">
@@ -59,9 +62,6 @@
             <li class="awards" ng-bind-html="movieCtrl.movie.parsedAwards"></li>
           </ul>
         </div>
-      </div>
-      <div id="no-results" class="text-muted">
-        No results found :(
       </div>
     </div>
   </div>

@@ -24,7 +24,7 @@ def api_get_movie():
     if result:
         return Response(result, mimetype='application/json')
     else:
-        abort(504)
+        abort(404)
 
 @app.route('/api/get_poster', methods=['GET'])
 def api_get_poster():

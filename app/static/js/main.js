@@ -54,16 +54,18 @@
                 }
 
                 // Search for the movie
-                $http.get(serverURL
+                $http.get(serverURL, {timeout: 5000}
                 ).success(function(response) {
                     // TODO: Store the poster image as a file on the server filesystem rather than passing a URI string.
                     $rootScope.movie = response;
 
-                }).error(function(error_code) {
-                    // TODO: Fix this
-                    // if error_code === 504, say OMDb is down
-                    // else if error_code === 404, say movie cannot be found
-                    alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+                }).error(function(data, status, headers, config) {
+                    if (status === 404) {
+                        alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
+                    } else {
+                        alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+                    }
+
                     $rootScope.movie = MovieService.movie;
 
                     stopLoadingSpinner();
@@ -97,26 +99,19 @@
             return $rootScope.movie.title;
         }, function() {
             self.movie = $rootScope.movie;
-            if (self.movie.response === 'False') {
-                // TODO: handle case where movie does not exist
-                // TODO: Handle case of angular failing when we get a 504 error
-            } else if (!self.movie) {
-                $('#no-results').slideDown(500);
-            } else {
-                self.movie.parsedRated = self.getRating();
-                self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
-                self.movie.parsedDirectors = self.getRole("Director", self.movie.director);
-                self.movie.parsedActors = self.getRole("Actor", self.movie.actors);
-                self.movie.parsedWriters = self.getRole("Writer", self.movie.writer);
-                self.movie.parsedAwards = self.getRole("Award", self.movie.awards);
-                self.movie.facebookURL = self.getShareUrl("facebook", self.movie.title);
-                self.movie.twitterURL = self.getShareUrl("twitter", self.movie.title);
-                self.movie.gplusURL = self.getShareUrl("gplus", self.movie.title);
+            self.movie.parsedRated = self.getRating();
+            self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
+            self.movie.parsedDirectors = self.getRole("Director", self.movie.director);
+            self.movie.parsedActors = self.getRole("Actor", self.movie.actors);
+            self.movie.parsedWriters = self.getRole("Writer", self.movie.writer);
+            self.movie.parsedAwards = self.getRole("Award", self.movie.awards);
+            self.movie.facebookURL = self.getShareUrl("facebook", self.movie.title);
+            self.movie.twitterURL = self.getShareUrl("twitter", self.movie.title);
+            self.movie.gplusURL = self.getShareUrl("gplus", self.movie.title);
 
-                if (self.movie.imdb_id) {
-                    window.history.pushState(null, null, '/movie/' + self.movie.imdb_id);
-                    scrollToResults();
-                }
+            if (self.movie.imdb_id) {
+                window.history.pushState(null, null, '/movie/' + self.movie.imdb_id);
+                scrollToResults();
             }
         });
 

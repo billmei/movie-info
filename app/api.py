@@ -32,6 +32,7 @@ def get_movie(title, year=None, imdb_id=None):
     else:
         # Otherwise fetch from OMDB
         movie = search_omdb(title, year, imdb_id)
+
         if movie:
             movie.poster = get_poster(movie.imdb_id)
             cache_movie(movie)
@@ -48,7 +49,7 @@ def search_omdb(title, year=None, imdb_id=None):
             movie = omdb.imdbid(imdb_id, fullplot=True)
         else:
             movie = omdb.get(title=title, year=year, fullplot=True)
-
+        print(movie)
     except requests.exceptions.HTTPError:
         return None
 
