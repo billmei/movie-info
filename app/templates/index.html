@@ -9,7 +9,7 @@
     </div>        
   </div>
   <div class="row">
-    <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.validateInput() && searchCtrl.searchMovie()" novalidate>
+    <form name="searchForm" id="search-form" ng-controller="SearchController as searchCtrl" ng-submit="searchCtrl.searchMovie()" novalidate>
       <div class="form-group">
         <label for="movie-title">Movie Title</label>
         <input ng-model="movie.input_title" type="text" class="form-control" id="movie-title" placeholder="e.g. Pulp Fiction" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Please enter the title of a movie.">
@@ -44,7 +44,6 @@
             <li class="title">{[movieCtrl.movie.title]}</li>
             <li class="rated label label-default">{[movieCtrl.movie.parsedRated]}</li>
             <li class="divider"></li>
-            <!-- <li class="stars">{[movieCtrl.movie.parsedStars]}</li> -->
             <li class="stars" ng-bind-html="movieCtrl.movie.parsedStars"></li>
             <li class="year">Released {[movieCtrl.movie.year]}</li>
             <li class="genre">{[movieCtrl.movie.genre]}</li>

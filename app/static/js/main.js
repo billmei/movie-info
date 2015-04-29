@@ -15,18 +15,7 @@ resizeDiv($('.header-container'), 500);
 
     app.factory('MovieService', function() {
         return {
-            'movie' : {
-                'Title' : '',
-                'Year' : '',
-                'Stars' : '',
-                'Genre' : '',
-                'Plot' : '',
-                'Runtime' : '',
-                'Director' : '',
-                'Actors' : '',
-                'Writer' : '',
-                'Awards' : ''
-            }
+            'movie' : {}
         };
     });
 
@@ -37,47 +26,44 @@ resizeDiv($('.header-container'), 500);
         $rootScope.movie = MovieService.movie;
 
         this.searchMovie = function() {
-            // Search for a movie based on the title and release year
-            var title = $rootScope.movie.input_title;
-            var year = $rootScope.movie.input_year || '';
-
-            // Clear everything first
-            clearResults();
-            startLoadingSpinner();
-
-            // Search for the movie
-            $http.get('/api/get_movie?movie_title=' + title + '&movie_year=' + year
-            ).success(function(response) {
-                $rootScope.movie = response;
-
-                scrollToResults();
-
-            }).error(function() {
-                alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-                $rootScope.movie = null;
-            });
-        };
-
-        this.validateInput = function() {
+            // Validate results
             $('#no-results').hide();
-            $('#movie-results').animate({opacity: 0});
+            $('#movie-results').animate({opacity: 0}, 200, 'linear', function() {
+                var title = $rootScope.movie.input_title;
+                var year = $rootScope.movie.input_year || '';
 
-            var title = $rootScope.movie.input_title;
-            var year = $rootScope.movie.input_year || '';
+                if (!isValidInput(title, 'is_not_empty')) {
+                    $('#movie-title').popover('show');
+                    return;
+                }
+                if (!isValidInput(+year, 'is_valid_year')) {
+                    $('#movie-year').popover('show');
+                    return;
+                }
 
-            if (!isValidInput(title, 'is_not_empty')) {
-                $('#movie-title').popover('show');
-                return false;
-            }
-            if (!isValidInput(+year, 'is_valid_year')) {
-                $('#movie-year').popover('show');
-                return false;
-            }
+                $('#movie-title').popover('destroy');
+                $('#movie-year').popover('destroy');
 
-            $('#movie-title').popover('destroy');
-            $('#movie-year').popover('destroy');
+                // Results are valid, go ahead and search
+                startLoadingSpinner();
 
-            return true;
+                // Search for the movie
+                $http.get('/api/get_movie?movie_title=' + title + '&movie_year=' + year
+                ).success(function(response) {
+                    $rootScope.movie = response;
+
+                    scrollToResults();
+
+                }).error(function(error_code) {
+                    // if error_code === 504, say OMDb is down
+                    // else if error_code === 404, say movie cannot be found
+                    alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
+                    $rootScope.movie = MovieService.movie;
+
+                    stopLoadingSpinner();
+                    $('#no-results').slideDown(500);
+                });
+            });
         };
     }]);
 
@@ -90,16 +76,25 @@ resizeDiv($('.header-container'), 500);
         $rootScope.$watch(function() {
             return $rootScope.movie.title;
         }, function() {
-            // TODO: Handle case when we don't get a response from the server
             self.movie = $rootScope.movie;
-            self.movie.parsedRated = self.getRating();
-            self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
-            // self.movie.socialshareurl
+            if (self.movie.response === 'False') {
+                // TODO handle case where movie does not exist
+                // TODO: Handle case of angular failing when we get a 504 error
+            } else if (!self.movie) {
+                $('#no-results').slideDown(500);
+            } else {
+                // TODO: retrieve movie poster
+                self.movie.parsedRated = self.getRating();
+                self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
+            }
         });
 
-        // TODO: Put everything into angular templating language
         this.getRating = function() {
-            return "R";
+            if (this.movie.rated && this.movie.rated !== 'Not Rated') {
+                return "Rated " + this.movie.rated;
+            } else {
+                return "Unrated";
+            }
         };
 
         this.getStars = function(score, maxStars, numStars) {
