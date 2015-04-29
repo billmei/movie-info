@@ -4,7 +4,7 @@ resizeDiv($('.transparent-overlay'), 500);
 resizeDiv($('.header-container'), 500);
 
 (function(){
-    var app = angular.module('movieInfo', []);
+    var app = angular.module('movieInfo', ['ngSanitize']);
 
     // Resolve conflict between Jinja2 tags and Angular tags
     // Jinja2 uses {{}} so make Angular use {[]}
@@ -93,12 +93,13 @@ resizeDiv($('.header-container'), 500);
             // TODO: Handle case when we don't get a response from the server
             self.movie = $rootScope.movie;
             self.movie.parsedRated = self.getRating();
-            self.movie.parsedStars = self.getStars(self.movie.imdbRating);
+            self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
+            // self.movie.socialshareurl
         });
 
         // TODO: Put everything into angular templating language
         this.getRating = function() {
-            return;
+            return "R";
         };
 
         this.getStars = function(score, maxStars, numStars) {
@@ -319,7 +320,6 @@ function clearResults() {
     // $('.ssk-facebook').attr('href','');
     // $('.ssk-twitter').attr('href','');
     // $('.ssk-google-plus').attr('href','');
-
 }
 
 function pluralize(role, people) {

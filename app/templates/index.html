@@ -44,7 +44,8 @@
             <li class="title">{[movieCtrl.movie.title]}</li>
             <li class="rated label label-default">{[movieCtrl.movie.parsedRated]}</li>
             <li class="divider"></li>
-            <li class="stars">{[movieCtrl.movie.parsedStars]}</li>
+            <!-- <li class="stars">{[movieCtrl.movie.parsedStars]}</li> -->
+            <li class="stars" ng-bind-html="movieCtrl.movie.parsedStars"></li>
             <li class="year">Released {[movieCtrl.movie.year]}</li>
             <li class="genre">{[movieCtrl.movie.genre]}</li>
 
