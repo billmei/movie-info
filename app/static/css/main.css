@@ -195,6 +195,9 @@ body {
     #movie-info .stars {
         color: #FFD700;
     }
+        #movie-info .stars:empty {
+            display: none;
+        }   
     #movie-info .plot {
         margin-bottom: 0.5em;
     }

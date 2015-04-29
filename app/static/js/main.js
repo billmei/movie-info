@@ -22,21 +22,22 @@ resizeDiv($('.header-container'), 500);
 
     app.controller('SearchController', ['$rootScope', '$http', 'MovieService',
         function($rootScope, $http, MovieService) {
-
         $rootScope.movie = MovieService.movie;
+        var self = this;
 
         this.searchMovie = function() {
             // Validate results
+
             $('#no-results').hide();
             $('#movie-results').animate({opacity: 0}, 200, 'linear', function() {
                 var title = $rootScope.movie.input_title;
                 var year = $rootScope.movie.input_year || '';
 
-                if (!isValidInput(title, 'is_not_empty')) {
+                if (!self.isValidInput(title, 'is_not_empty')) {
                     $('#movie-title').popover('show');
                     return;
                 }
-                if (!isValidInput(+year, 'is_valid_year')) {
+                if (!self.isValidInput(+year, 'is_valid_year')) {
                     $('#movie-year').popover('show');
                     return;
                 }
@@ -65,13 +66,27 @@ resizeDiv($('.header-container'), 500);
                 });
             });
         };
+
+        this.isValidInput = function(input, condition) {
+            // Ensures the movie title is not blank and the year entered is reasonable
+            switch (condition) {
+                case undefined:
+                    return false;
+                case 'is_not_empty':
+                    return !!input;
+                case 'is_valid_year':
+                    return input === 0 || !isNaN(input) && input > 1000 && input <= new Date().getFullYear();
+                default:
+                    return false;
+            }
+        };
     }]);
 
     app.controller('MovieController', ['$scope', '$rootScope', 'MovieService',
         function($scope, $rootScope, MovieService){
         $rootScope.movie = MovieService.movie;
-        this.movie = {};
         var self = this;
+        self.movie = {};
 
         $rootScope.$watch(function() {
             return $rootScope.movie.title;
@@ -94,10 +109,10 @@ resizeDiv($('.header-container'), 500);
         });
 
         this.getRating = function() {
-            if (this.movie.rated && this.movie.rated !== 'Not Rated') {
-                return "Rated " + this.movie.rated;
+            if (this.movie.rated && this.movie.rated !== 'Not Rated' && this.movie.rated !== 'N/A') {
+                return 'Rated ' + this.movie.rated;
             } else {
-                return "Unrated";
+                return 'Unrated';
             }
         };
 
@@ -127,7 +142,7 @@ resizeDiv($('.header-container'), 500);
         };
 
         this.getRole = function(role, people) {
-            if (!people) { return; }
+            if (!people || people === 'N/A') { return; }
             return '<span class="movie-label">' + this.pluralize(role, people) +': </span>' +
                    '<p>' + people + '</p>';
         };
@@ -136,7 +151,7 @@ resizeDiv($('.header-container'), 500);
             // Pluralize the noun if there is more than one person
             // E.g. "Director" -> "Directors"
             if (people.indexOf(',') > -1 || role === 'Award') {
-                return role + "s";
+                return role + 's';
             } else {
                 return role;
             }
@@ -173,20 +188,6 @@ function resizeDiv(div, minHeight) {
     // Resizes a div to match the window height
     if ($(window).height() > minHeight) {
         div.css('height', $(window).height());
-    }
-}
-
-function isValidInput(input, condition) {
-    // Ensures the movie title is not blank and the year entered is reasonable
-    switch (condition) {
-        case undefined:
-            return false;
-        case 'is_not_empty':
-            return !!input;
-        case 'is_valid_year':
-            return input === 0 || !isNaN(input) && input > 1000 && input <= new Date().getFullYear();
-        default:
-            return false;
     }
 }
 

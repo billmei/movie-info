@@ -7,7 +7,6 @@ Find info on movies. [Click here](http://ga-movie-info.herokuapp.com/) for the d
 - Social sharing of each result page to Facebook, Twitter, and Google+
 - Tested to work on Chrome, Firefox, and IE.
 - Handles multiple error cases and zero data cases gracefully.
-- I could have used Jinja templates in Flask but I chose to fill in the data with jQuery instead since you guys wanted to see a sample of my JavaScript knowledge.
 
 ## Installation Instructions
 

@@ -49,7 +49,7 @@
             <li class="genre">{[movieCtrl.movie.genre]}</li>
 
             <!-- Middle Area -->
-            <li class="plot">{[movieCtrl.movie.plot]}</li>
+            <li class="plot">{[movieCtrl.movie.plot === 'N/A' ? '' : movieCtrl.movie.plot]}</li>
 
             <!-- Bottom Area -->
             <li class="runtime">Runtime {[movieCtrl.movie.runtime]}</li>
