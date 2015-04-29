@@ -8,10 +8,10 @@ def render_index_page():
     """Display the landing page"""
     return render_template('index.html')
 
-@app.route('/api/cache_movie', methods=['POST'])
-def api_cache_movie():
-    """Cache a movie in the database"""
-    return api.cache_movie(request.form.get('movie_data', ''))
+@app.route('/movie/<imdb_id>', methods=['GET'])
+def render_movie_page(imdb_id):
+    """Render the movie's data page"""
+    return render_template('index.html', imdb_id=imdb_id)
 
 @app.route('/api/get_movie', methods=['GET'])
 def api_get_movie():
@@ -25,13 +25,3 @@ def api_get_movie():
         return Response(result, mimetype='application/json')
     else:
         abort(404)
-
-@app.route('/api/get_poster', methods=['GET'])
-def api_get_poster():
-    """Get the URI of a movie poster by IMDB ID"""
-    return api.get_poster(request.args.get('imdb_id', '')) or ''
-
-@app.route('/movie/<imdb_id>', methods=['GET'])
-def render_movie_page(imdb_id):
-    """Render the movie's data page"""
-    return render_template('index.html', imdb_id=imdb_id)

@@ -49,7 +49,6 @@ def search_omdb(title, year=None, imdb_id=None):
             movie = omdb.imdbid(imdb_id, fullplot=True)
         else:
             movie = omdb.get(title=title, year=year, fullplot=True)
-        print(movie)
     except requests.exceptions.HTTPError:
         return None
 
