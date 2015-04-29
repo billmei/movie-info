@@ -86,6 +86,10 @@ resizeDiv($('.header-container'), 500);
                 // TODO: retrieve movie poster
                 self.movie.parsedRated = self.getRating();
                 self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
+                self.movie.parsedDirectors = self.getRole("Director", self.movie.director);
+                self.movie.parsedActors = self.getRole("Actor", self.movie.actors);
+                self.movie.parsedWriters = self.getRole("Writer", self.movie.writer);
+                self.movie.parsedAwards = self.getRole("Award", self.movie.awards);
             }
         });
 
@@ -120,6 +124,22 @@ resizeDiv($('.header-container'), 500);
                 result += '<i class="fa fa-star-o"></i>';
             }
             return result;
+        };
+
+        this.getRole = function(role, people) {
+            if (!people) { return; }
+            return '<span class="movie-label">' + this.pluralize(role, people) +': </span>' +
+                   '<p>' + people + '</p>';
+        };
+
+        this.pluralize = function(role, people) {
+            // Pluralize the noun if there is more than one person
+            // E.g. "Director" -> "Directors"
+            if (people.indexOf(',') > -1 || role === 'Award') {
+                return role + "s";
+            } else {
+                return role;
+            }
         };
     }]);
     
@@ -211,47 +231,6 @@ function scrollToResults() {
     stopLoadingSpinner();
 }
 
-function handleOMDbResponse(response) {
-    // Handles the response from OMDb, displaying error messages if necessary.
-    var movie = response;
-
-    stopLoadingSpinner();
-
-    if (movie.Response === 'False') {
-        if (movie.Error === 'Movie not found!') {
-            $('#no-results').slideDown(500);
-            alertModal('Movie Not Found', '<p>Sorry! We could not find a movie with that title.</p>');
-        } else {
-            alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
-        }
-    } else if (!movie) {
-        $('#no-results').slideDown(500);
-    } else {
-        // This AJAX request uses the separate API to retrieve movie posters.
-        // Used to get around the 403 error when code is in production.
-        $.ajax({
-            url: '/api/get_poster?imdb_id=' + movie.imdbID,
-            type: 'GET'
-        }).done(function(posterURI) {
-            movie.Poster = posterURI;
-            // Show the movie information
-            showMovieInfo(movie);
-            // Cache the result in our database so that we don't have to call the OMDb API again.
-            cacheMovie(movie);
-        });
-    }
-}
-
-function cacheMovie(movie) {
-    // Cache the movie in our database
-    movie = JSON.stringify(movie);
-    $.ajax({
-        url: '/api/cache_movie',
-        type: 'POST',
-        data: {movie_data: movie}
-    });
-}
-
 function startLoadingSpinner() {
     // Start the loading spinner
     $('.loading-spinner').addClass('loading-enabled');
@@ -271,18 +250,6 @@ function showMovieInfo(movie) {
     window.history.pushState(null, null, '/movie/' + movie.imdbID);
 
     showMoviePoster(movie.Poster, movie.Title);
-    if (movie.Title !== 'N/A')      result.children('.title')   .html(movie.Title);
-    if (movie.imdbRating !== 'N/A') result.children('.stars')   .html(convertStars(movie.imdbRating));
-    if (movie.Rated !== 'N/A' && movie.Rated !== 'Not Rated') { result.children('.rated').html("Rated " + movie.Rated);} else {result.children('.rated').html("Unrated");}
-    if (movie.Year !== 'N/A')       result.children('.year')    .html("Released " + movie.Year);
-    if (movie.Genre !== 'N/A')      result.children('.genre')   .html(movie.Genre);
-    if (movie.Plot !== 'N/A')       result.children('.plot')    .html(movie.Plot);
-    if (movie.Runtime !== 'N/A')    result.children('.runtime') .html("Runtime " + movie.Runtime);
-    if (movie.Actors !== 'N/A')     result.children('.actors')  .html('<span class="movie-label">'+pluralize("Actor",movie.Actors)+': </span><p>'+movie.Actors+'</p>');
-    if (movie.Director !== 'N/A')   result.children('.director').html('<span class="movie-label">'+pluralize("Director",movie.Director)+': </span><p>'+movie.Director+'</p>');
-    if (movie.Writer !== 'N/A')     result.children('.writer')  .html('<span class="movie-label">'+pluralize("Writer",movie.Writer)+': </span><p>'+movie.Writer+'</p>');
-    if (movie.Awards !== 'N/A')     result.children('.awards')  .html('<span class="movie-label">Awards: </span><p>'+movie.Awards+'</p>');
-
     // Generate links for social media buttons
     var statusMesssage;
     if (movie.Title !== 'N/A') {
@@ -308,24 +275,6 @@ function showMoviePoster(posterURI, title) {
     }
 }
 
-function clearResults() {
-    // Clears movie data from the DOM elements in the page
-    // $('#movie-poster').children('img').attr('src','/static/img/no_poster.png').attr('alt','No movie poster available');
-    // $('#movie-info').children().html('');
-    // $('.ssk-facebook').attr('href','');
-    // $('.ssk-twitter').attr('href','');
-    // $('.ssk-google-plus').attr('href','');
-}
-
-function pluralize(role, people) {
-    // Pluralize the noun if there is more than one person
-    // E.g. "Director" -> "Directors"
-    if (people.indexOf(',') > -1) {
-        return role + "s";
-    } else {
-        return role;
-    }
-}
 
 function alertModal(title, body) {
     // Display error message to the user in a modal

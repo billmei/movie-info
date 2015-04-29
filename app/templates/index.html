@@ -53,22 +53,10 @@
 
             <!-- Bottom Area -->
             <li class="runtime">Runtime {[movieCtrl.movie.runtime]}</li>
-            <li class="director">
-              <span class="movie-label"><!-- Pluralize --></span>
-              <p>{[movieCtrl.movie.director]}</p>
-            </li>
-            <li class="actors">
-              <span class="movie-label"><!-- Pluralize --></span>
-              <p>{[movieCtrl.movie.actors]}</p>
-            </li>
-            <li class="writer">
-              <span class="movie-label"><!-- Pluralize --></span>
-              <p>{[movieCtrl.movie.writer]}</p>
-            </li>
-            <li class="awards">
-              <span class="movie-label">Awards: </span>
-              <p>{[movieCtrl.movie.awards]}</p>
-            </li>
+            <li class="director" ng-bind-html="movieCtrl.movie.parsedDirectors"></li>
+            <li class="actors" ng-bind-html="movieCtrl.movie.parsedActors"></li>
+            <li class="writer" ng-bind-html="movieCtrl.movie.parsedWriters"></li>
+            <li class="awards" ng-bind-html="movieCtrl.movie.parsedAwards"></li>
           </ul>
         </div>
       </div>
