@@ -32,9 +32,9 @@
         <div id="movie-poster" class="col-xs-12 col-sm-5">
           <img ng-src="{[movieCtrl.movie.poster]}" alt="">
           <ul class="share-links">
-            <li><a href="#" class="ssk ssk-text ssk-facebook">Share on Facebook</a></li>
-            <li><a href="#" class="ssk ssk-text ssk-twitter">Share on Twitter</a></li>
-            <li><a href="#" class="ssk ssk-text ssk-google-plus">Share on Google+</a></li>
+            <li><a ng-href="{[movieCtrl.movie.facebookURL]}" class="ssk ssk-text ssk-facebook" target="_blank">Share on Facebook</a></li>
+            <li><a ng-href="{[movieCtrl.movie.twitterURL]}" class="ssk ssk-text ssk-twitter" target="_blank">Share on Twitter</a></li>
+            <li><a ng-href="{[movieCtrl.movie.gplusURL]}" class="ssk ssk-text ssk-google-plus" target="_blank">Share on Google+</a></li>
           </ul>
         </div>
         <div class="movie-sidebar col-xs-12 col-sm-7 col-sm-offset-5" >

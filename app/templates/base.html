@@ -16,8 +16,7 @@
     <link rel="stylesheet" href="/static/css/main.css">
   </head>
   <body>
-    {% block content %}{% endblock %}   
-
+    {% block content %}{% endblock %}
 
     <footer>
       <p class="text-center text-muted">Created by <a href="http://www.kortaggio.com">Bill Mei</a> using Flask and Angular.js</p>
@@ -29,7 +28,6 @@
     <script src="/static/js/vendor/bootstrap.min.js"></script>
     <script src="/static/js/plugins.js"></script>
     <script src="/static/js/main.js"></script>
-    <script>loadMovie("{{ imdb_id }}");</script>
   
     <div id="alert-modal" class="modal fade">
       <div class="modal-dialog">

@@ -1,9 +1,10 @@
-// buildHeaderBackground($(window).height(), 100, 5);
-resizeDiv($('#scrolling-background'), 500);
-resizeDiv($('.transparent-overlay'), 500);
-resizeDiv($('.header-container'), 500);
-
 (function(){
+    // TODO: Uncomment this.
+    // buildHeaderBackground($(window).height(), 100, 5);
+    resizeDiv($('#scrolling-background'), 500);
+    resizeDiv($('.transparent-overlay'), 500);
+    resizeDiv($('.header-container'), 500);
+
     var app = angular.module('movieInfo', ['ngSanitize']);
 
     // Resolve conflict between Jinja2 tags and Angular tags
@@ -56,6 +57,7 @@ resizeDiv($('.header-container'), 500);
                     scrollToResults();
 
                 }).error(function(error_code) {
+                    // TODO: Fix this
                     // if error_code === 504, say OMDb is down
                     // else if error_code === 404, say movie cannot be found
                     alertModal('OMDb is down', '<p>It looks like the OMDb server where we fetch our data is down. If you try again later the server may be back online.</p>');
@@ -93,17 +95,23 @@ resizeDiv($('.header-container'), 500);
         }, function() {
             self.movie = $rootScope.movie;
             if (self.movie.response === 'False') {
-                // TODO handle case where movie does not exist
+                // TODO: handle case where movie does not exist
                 // TODO: Handle case of angular failing when we get a 504 error
             } else if (!self.movie) {
                 $('#no-results').slideDown(500);
             } else {
+                if (self.movie.imdb_id) {
+                    window.history.pushState(null, null, '/movie/' + self.movie.imdb_id);
+                }
                 self.movie.parsedRated = self.getRating();
                 self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
                 self.movie.parsedDirectors = self.getRole("Director", self.movie.director);
                 self.movie.parsedActors = self.getRole("Actor", self.movie.actors);
                 self.movie.parsedWriters = self.getRole("Writer", self.movie.writer);
                 self.movie.parsedAwards = self.getRole("Award", self.movie.awards);
+                self.movie.facebookURL = self.getShareUrl("facebook", self.movie.title);
+                self.movie.twitterURL = self.getShareUrl("twitter", self.movie.title);
+                self.movie.gplusURL = self.getShareUrl("gplus", self.movie.title);
             }
         });
 
@@ -155,6 +163,24 @@ resizeDiv($('.header-container'), 500);
                 return role;
             }
         };
+
+        this.getShareUrl = function(channel, movieTitle) {
+            // Generate links for social media buttons
+            switch (channel) {
+                case 'facebook':
+                    return 'https://www.facebook.com/sharer/sharer.php?u=' + window.location.href;
+                case 'twitter':
+                    var statusMesssage;
+                    if (movieTitle !== 'N/A') {
+                        statusMesssage = encodeURIComponent('Check out the movie '+ movieTitle + ': ');
+                    } else {
+                        statusMesssage = '';
+                    }
+                    return 'https://twitter.com/home?status=' + statusMesssage + window.location.href;
+                case 'gplus':
+                    return 'https://plus.google.com/share?url=' + window.location.href;
+            }
+        };
     }]);
     
     // Popovers to display validation errors
@@ -166,112 +192,87 @@ resizeDiv($('.header-container'), 500);
     $('#movie-year').on('focus', function() {
         $(this).popover('destroy');
     });
+
+
+    function buildHeaderBackground(containerHeight, rowHeight, minRows) {
+        // Creates the wall of movie-posters in the background that is animated via CSS.
+        var container = $('#scrolling-background');
+
+        var rowsNeeded = Math.ceil(containerHeight / rowHeight);
+
+        // Minimum 5 rows
+        rowsNeeded = rowsNeeded < 5 ? 5 : rowsNeeded;
+
+        for (var i = 0; i < rowsNeeded; i++) {
+            direction = i % 2 === 0 ? 'left' : 'right';
+            container.append('<div class="background-'+(i%10)+' scroll-'+direction+' background-poster"></div>');   
+        }
+    }
+
+    function resizeDiv(div, minHeight) {
+        // Resizes a div to match the window height
+        if ($(window).height() > minHeight) {
+            div.css('height', $(window).height());
+        }
+    }
+
+    function loadMovie(imdb_id) {
+        // Search for a movie based on the imdb_id
+        if (!imdb_id || imdb_id.length === 0) {
+            return;
+        }
+
+        // Clear everything first
+        clearResults();
+
+        // Fetch from our own database first if the movie exists
+        $.ajax({
+            url: '/api/get_movie_by_id',
+            type: 'GET',
+            data: {
+                imdb_id: imdb_id
+            }
+        }).done(function(movie) {
+            // Display result
+            if (movie.length === 0) {
+                // The movie doesn't exist in the database, so we fetch from OMDb
+                loadMovieFromOMDb(imdb_id);
+            } else {
+                // Otherwise fetch it from our own database
+                movie = JSON.parse(movie);
+                handleDatabaseResponse(movie);
+            }
+        }).fail(function() {
+            alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
+        });    
+
+    }
+
+    function scrollToResults() {
+        $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
+            $('html,body').animate({
+                scrollTop: $('#results-page').offset().top
+            }, 500);
+        });
+        stopLoadingSpinner();
+    }
+
+    function startLoadingSpinner() {
+        // Start the loading spinner
+        $('.loading-spinner').addClass('loading-enabled');
+        $('#search-btn').addClass('loading-disabled');
+    }
+
+    function stopLoadingSpinner() {
+        // Stop the loading spinner
+        $('.loading-spinner').removeClass('loading-enabled');
+        $('#search-btn').removeClass('loading-disabled');
+    }
+
+    function alertModal(title, body) {
+        // Display error message to the user in a modal
+        $('#alert-modal-title').html(title);
+        $('#alert-modal-body').html(body);
+        $('#alert-modal').modal('show');
+    }
 })();
-
-function buildHeaderBackground(containerHeight, rowHeight, minRows) {
-    // Creates the wall of movie-posters in the background that is animated via CSS.
-    var container = $('#scrolling-background');
-
-    var rowsNeeded = Math.ceil(containerHeight / rowHeight);
-
-    // Minimum 5 rows
-    rowsNeeded = rowsNeeded < 5 ? 5 : rowsNeeded;
-
-    for (var i = 0; i < rowsNeeded; i++) {
-        direction = i % 2 === 0 ? 'left' : 'right';
-        container.append('<div class="background-'+(i%10)+' scroll-'+direction+' background-poster"></div>');   
-    }
-}
-
-function resizeDiv(div, minHeight) {
-    // Resizes a div to match the window height
-    if ($(window).height() > minHeight) {
-        div.css('height', $(window).height());
-    }
-}
-
-function loadMovie(imdb_id) {
-    // Search for a movie based on the imdb_id
-    if (!imdb_id || imdb_id.length === 0) {
-        return;
-    }
-
-    // Clear everything first
-    clearResults();
-
-    // Fetch from our own database first if the movie exists
-    $.ajax({
-        url: '/api/get_movie_by_id',
-        type: 'GET',
-        data: {
-            imdb_id: imdb_id
-        }
-    }).done(function(movie) {
-        // Display result
-        if (movie.length === 0) {
-            // The movie doesn't exist in the database, so we fetch from OMDb
-            loadMovieFromOMDb(imdb_id);
-        } else {
-            // Otherwise fetch it from our own database
-            movie = JSON.parse(movie);
-            handleDatabaseResponse(movie);
-        }
-    }).fail(function() {
-        alertModal('Too much traffic', '<p>It looks like too many people are trying to search for movies! Try again at a later time.</p>');
-    });    
-
-}
-
-function scrollToResults() {
-    $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
-        $('html,body').animate({
-            scrollTop: $('#results-page').offset().top
-        }, 500);
-    });
-    stopLoadingSpinner();
-}
-
-function startLoadingSpinner() {
-    // Start the loading spinner
-    $('.loading-spinner').addClass('loading-enabled');
-    $('#search-btn').addClass('loading-disabled');
-}
-
-function stopLoadingSpinner() {
-    // Stop the loading spinner
-    $('.loading-spinner').removeClass('loading-enabled');
-    $('#search-btn').removeClass('loading-disabled');
-}
-
-function showMovieInfo(movie) {
-    // Populates the movie data into the DOM elements on the page
-    var result = $('#movie-info');
-
-    window.history.pushState(null, null, '/movie/' + movie.imdbID);
-
-    showMoviePoster(movie.Poster, movie.Title);
-    // Generate links for social media buttons
-    var statusMesssage;
-    if (movie.Title !== 'N/A') {
-        statusMesssage = encodeURIComponent('Check out the movie '+ movie.Title + ': ');
-    } else {
-        statusMesssage = '';
-    }
-    $('.ssk-facebook').attr('href','https://www.facebook.com/sharer/sharer.php?u=' + window.location.href);
-    $('.ssk-twitter').attr('href','https://twitter.com/home?status=' + statusMesssage + window.location.href);
-    $('.ssk-google-plus').attr('href','https://plus.google.com/share?url=' + window.location.href);
-
-    $('#movie-results').animate({opacity: 1}, 200, 'linear', function() {
-        $('html,body').animate({
-            scrollTop: $('#results-page').offset().top
-        }, 500);
-    });
-}
-
-function alertModal(title, body) {
-    // Display error message to the user in a modal
-    $('#alert-modal-title').html(title);
-    $('#alert-modal-body').html(body);
-    $('#alert-modal').modal('show');
-}
-
