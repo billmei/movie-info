@@ -52,9 +52,8 @@
                 // Search for the movie
                 $http.get('/api/get_movie?movie_title=' + title + '&movie_year=' + year
                 ).success(function(response) {
-                    $rootScope.movie = response;
 
-                    scrollToResults();
+                    $rootScope.movie = response;
 
                 }).error(function(error_code) {
                     // TODO: Fix this
@@ -100,9 +99,6 @@
             } else if (!self.movie) {
                 $('#no-results').slideDown(500);
             } else {
-                if (self.movie.imdb_id) {
-                    window.history.pushState(null, null, '/movie/' + self.movie.imdb_id);
-                }
                 self.movie.parsedRated = self.getRating();
                 self.movie.parsedStars = self.getStars(self.movie.imdb_rating);
                 self.movie.parsedDirectors = self.getRole("Director", self.movie.director);
@@ -112,6 +108,11 @@
                 self.movie.facebookURL = self.getShareUrl("facebook", self.movie.title);
                 self.movie.twitterURL = self.getShareUrl("twitter", self.movie.title);
                 self.movie.gplusURL = self.getShareUrl("gplus", self.movie.title);
+
+                if (self.movie.imdb_id) {
+                    window.history.pushState(null, null, '/movie/' + self.movie.imdb_id);
+                    scrollToResults();
+                }
             }
         });
 

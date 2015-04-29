@@ -30,7 +30,7 @@
     <div class="col-xs-12 col-md-8 col-md-offset-2">
       <div id="movie-results" class="row" ng-controller="MovieController as movieCtrl">
         <div id="movie-poster" class="col-xs-12 col-sm-5">
-          <img ng-src="{[movieCtrl.movie.poster]}" alt="">
+          <img ng-src="{[movieCtrl.movie.poster ? movieCtrl.movie.poster : '/static/img/no_poster.png']}" alt="">
           <ul class="share-links">
             <li><a ng-href="{[movieCtrl.movie.facebookURL]}" class="ssk ssk-text ssk-facebook" target="_blank">Share on Facebook</a></li>
             <li><a ng-href="{[movieCtrl.movie.twitterURL]}" class="ssk ssk-text ssk-twitter" target="_blank">Share on Twitter</a></li>
