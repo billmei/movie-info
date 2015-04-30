@@ -1,6 +1,7 @@
 from app import db, models
+from config import PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER, OMDB_API_KEY
+from werkzeug import secure_filename
 import requests
-from config import OMDB_API_KEY
 import json
 import omdb
 
@@ -72,13 +73,22 @@ def cache_movie(movie):
 
 def get_poster(imdb_id):
     """
-    Builds the URI of a movie poster by imdb_id
+    Builds a local filename for a movie poster by imdb_id
     from the OMDB Poster API
     """
     uri = 'http://img.omdbapi.com/?i=' + imdb_id + '&apikey=' + OMDB_API_KEY
-    r = requests.get(uri)
+    r = requests.get(uri, stream=True)
     if r.status_code == 404 or r.status_code == 500 or r.status_code == 403:
         # No poster found, return the default image
         return None
     else:
-        return uri
+        local_file = PROJECT_DIR + APP_FOLDER + \
+                     POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+
+        with open(local_file, 'wb') as poster_file:
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:
+                    poster_file.write(chunk)
+                    poster_file.flush()
+
+        return POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'

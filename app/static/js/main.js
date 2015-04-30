@@ -56,7 +56,7 @@
                 // Search for the movie
                 $http.get(serverURL, {timeout: 5000}
                 ).success(function(response) {
-                    // TODO: Store the poster image as a file on the server filesystem rather than passing a URI string.
+                    
                     $rootScope.movie = response;
 
                 }).error(function(data, status, headers, config) {

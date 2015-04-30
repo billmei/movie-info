@@ -24,3 +24,7 @@ except NameError:
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PROJECT_DIR, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(PROJECT_DIR, 'db_repository')
+
+APP_FOLDER = '/app'
+POSTERS_FOLDER = '/static/posters/'
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024
