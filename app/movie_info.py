@@ -1,6 +1,8 @@
 from app import db, models
-from config import PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER, OMDB_API_KEY
+from config import APP_NAME, PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER
+from config import OMDB_API_KEY, USE_S3
 from werkzeug import secure_filename
+from s3file import s3open
 import requests
 import json
 import omdb
@@ -82,13 +84,26 @@ def get_poster(imdb_id):
         # No poster found, return the default image
         return None
     else:
-        local_file = PROJECT_DIR + APP_FOLDER + \
-                     POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+        if USE_S3:
+            remote_file = APP_NAME + \
+                          POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+            s3_path = 'https://bucket.s3.amazonaws.com/'
+            with s3open(s3_path + remote_file) as poster_file:
+                write_to_file(poster_file, r)
 
-        with open(local_file, 'wb') as poster_file:
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk:
-                    poster_file.write(chunk)
-                    poster_file.flush()
+            return s3_path + remote_file
 
-        return POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+        else:
+            local_file = PROJECT_DIR + APP_FOLDER + \
+                         POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+            with open(local_file, 'wb') as poster_file:
+                write_to_file(poster_file, r)
+
+            return POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+
+def write_to_file(filename, req):
+    """Writes arbitrary binary data retrieved from a request to a file"""
+    for chunk in req.iter_content(chunk_size=1024):
+        if chunk:
+            filename.write(chunk)
+            filename.flush()

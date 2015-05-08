@@ -1,7 +1,9 @@
 import os
 
+APP_NAME = 'movie-info'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
+USE_S3 = True
 
 # From https://gist.github.com/ndarville/3452907
 try:
@@ -21,6 +23,11 @@ except NameError:
         OMDB_API_KEY = open(OMDB_SECRET_FILE).read().strip()
     except IOError:
         OMDB_API_KEY = os.environ.get('OMDB_API_KEY')
+
+if USE_S3:
+    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
+    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
+    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(PROJECT_DIR, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(PROJECT_DIR, 'db_repository')
