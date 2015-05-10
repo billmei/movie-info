@@ -52,8 +52,8 @@ This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of th
 
 If you have an S3 account and want to use it in conjunction with deploying on Heroku, run:
 
-	$ heroku config:set AWS_ACCESS_KEY=your-access-key-here
-	$ heroku config:set AWS_SECRET_KEY=your-secret-key-here
+	$ heroku config:set S3_ACCESS_KEY=your-access-key-here
+	$ heroku config:set S3_SECRET_KEY=your-secret-key-here
 	$ heroku config:set S3_BUCKET=your-bucket-id-here
 
 ### Step 5

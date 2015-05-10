@@ -1,3 +1,5 @@
+boto==2.38.0
+bz2file==0.98
 decorator==3.4.0
 Flask==0.10.1
 Flask-SQLAlchemy==2.0
@@ -9,6 +11,7 @@ omdb==0.3.1
 pbr==0.10.8
 requests==2.6.0
 six==1.9.0
+smart-open==1.2.1
 SQLAlchemy==1.0.0b1
 sqlalchemy-migrate==0.9.5
 sqlparse==0.1.14

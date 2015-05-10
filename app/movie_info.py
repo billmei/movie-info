@@ -2,8 +2,8 @@ from app import db, models
 from config import APP_NAME, PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER
 from config import OMDB_API_KEY, USE_S3
 from werkzeug import secure_filename
-from s3file import s3open
 import requests
+import smart_open
 import json
 import omdb
 
@@ -88,7 +88,7 @@ def get_poster(imdb_id):
             remote_file = APP_NAME + \
                           POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
             s3_path = 'https://bucket.s3.amazonaws.com/'
-            with s3open(s3_path + remote_file) as poster_file:
+            with smart_open.smart_open(s3_path + remote_file, 'wb') as poster_file:
                 write_to_file(poster_file, r)
 
             return s3_path + remote_file
