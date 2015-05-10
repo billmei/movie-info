@@ -22,14 +22,37 @@ Flask Version 0.10.1
 
 ### Step 2
 
-Install `virtualenv` and app requirements:
+Install `virtualenv` and the python3 interpreter:
 
 	$ pip install virtualenv
 	$ virtualenv -p python3 venv
+
+### Step 3
+
+This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of the movie posters. If you don't have an S3 Account or only want to run the app locally, set the config flag `USE_S3 = False` in `config.py` and skip the rest of Step 3.
+
+If you have an S3 account and want to use it in conjunction with deploying on Heroku, run:
+
+	$ heroku config:set S3_ACCESS_KEY=your-access-key-here
+	$ heroku config:set S3_SECRET_KEY=your-secret-key-here
+	$ heroku config:set S3_BUCKET_NAME=your-bucket-name-here
+
+Otherwise, if you are running on your local machine, you still need to set the following environment variables:
+
+	$ echo 'export S3_ACCESS_KEY=your-access-key-here' >> venv/bin/activate
+	$ echo 'export S3_SECRET_KEY=your-secret-key-here' >> venv/bin/activate
+	$ echo 'export S3_BUCKET_NAME=your-bucket-name-here' >> venv/bin/activate
+
+This will make sure the environment variables are configured correctly every time you run the virtualenv wrapper.
+
+### Step 4
+
+Activate `virtualenv` and install the app requirements
+
 	$ source venv/bin/activate
 	$ pip install -r requirements.txt
 
-### Step 3
+### Step 5
 
 Generate a Flask secret key and save it as `/secret.txt` in the root folder. If running on Heroku instead of localhost, set the environment variable:
 
@@ -39,24 +62,14 @@ You also need to [get an OMDB Poster API key](http://beforethecode.com/projects/
 
 	$ heroku config:set OMDB_API_KEY=your-api-key-here
 
-### Step 3.5 (Optional)
+### Step 5.5 (Optional)
 
 If you want to wipe the database and create a new one from scratch, first delete the `app.db` file and the `db_repository` folder. You can then create and migrate the database using:
 
 	$ python db_create.py
 	$ python db_migrate.py
 
-### Step 4
-
-This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of the movie posters. If you don't have an S3 Account or only want to run the app locally, set the config flag `USE_S3 = False` in `config.py` and skip the rest of Step 4.
-
-If you have an S3 account and want to use it in conjunction with deploying on Heroku, run:
-
-	$ heroku config:set S3_ACCESS_KEY=your-access-key-here
-	$ heroku config:set S3_SECRET_KEY=your-secret-key-here
-	$ heroku config:set S3_BUCKET=your-bucket-id-here
-
-### Step 5
+### Step 6
 
 Run with
 

@@ -1,6 +1,6 @@
 from app import db, models
 from config import APP_NAME, PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER
-from config import OMDB_API_KEY, USE_S3
+from config import OMDB_API_KEY, USE_S3, S3_BUCKET_NAME
 from werkzeug import secure_filename
 import requests
 import smart_open
@@ -83,23 +83,23 @@ def get_poster(imdb_id):
     if r.status_code == 404 or r.status_code == 500 or r.status_code == 403:
         # No poster found, return the default image
         return None
+
+    if USE_S3:
+        remote_file = APP_NAME + \
+                      POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+        s3_path = 'https://' + S3_BUCKET_NAME + '.s3.amazonaws.com/'
+        with smart_open.smart_open(s3_path + remote_file, 'wb') as poster_file:
+            write_to_file(poster_file, r)
+
+        return s3_path + remote_file
+
     else:
-        if USE_S3:
-            remote_file = APP_NAME + \
-                          POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
-            s3_path = 'https://bucket.s3.amazonaws.com/'
-            with smart_open.smart_open(s3_path + remote_file, 'wb') as poster_file:
-                write_to_file(poster_file, r)
+        local_file = PROJECT_DIR + APP_FOLDER + \
+                     POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+        with open(local_file, 'wb') as poster_file:
+            write_to_file(poster_file, r)
 
-            return s3_path + remote_file
-
-        else:
-            local_file = PROJECT_DIR + APP_FOLDER + \
-                         POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
-            with open(local_file, 'wb') as poster_file:
-                write_to_file(poster_file, r)
-
-            return POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+        return POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
 
 def write_to_file(filename, req):
     """Writes arbitrary binary data retrieved from a request to a file"""
