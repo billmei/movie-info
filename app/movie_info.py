@@ -1,6 +1,6 @@
 from app import db, models
-from config import APP_NAME, PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER
-from config import OMDB_API_KEY, USE_S3, S3_BUCKET_NAME
+from config import PROJECT_DIR, APP_FOLDER, POSTERS_FOLDER, OMDB_API_KEY
+from config import USE_S3, S3_BUCKET_NAME, S3_ACCESS_KEY, S3_SECRET_KEY
 from werkzeug import secure_filename
 import requests
 import smart_open
@@ -85,13 +85,15 @@ def get_poster(imdb_id):
         return None
 
     if USE_S3:
-        remote_file = APP_NAME + \
-                      POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
-        s3_path = 'https://' + S3_BUCKET_NAME + '.s3.amazonaws.com/'
+        remote_file = POSTERS_FOLDER + secure_filename(imdb_id) + '.jpg'
+
+        s3_path = 's3://' + S3_ACCESS_KEY + ':' + S3_SECRET_KEY + \
+                  '@' + S3_BUCKET_NAME + '/'
+
         with smart_open.smart_open(s3_path + remote_file, 'wb') as poster_file:
             write_to_file(poster_file, r)
 
-        return s3_path + remote_file
+        return '//s3.amazonaws.com/' + S3_BUCKET_NAME + remote_file
 
     else:
         local_file = PROJECT_DIR + APP_FOLDER + \
@@ -106,4 +108,3 @@ def write_to_file(filename, req):
     for chunk in req.iter_content(chunk_size=1024):
         if chunk:
             filename.write(chunk)
-            filename.flush()

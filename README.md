@@ -29,21 +29,21 @@ Install `virtualenv` and the python3 interpreter:
 
 ### Step 3
 
-This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of the movie posters. If you don't have an S3 Account or only want to run the app locally, set the config flag `USE_S3 = False` in `config.py` and skip the rest of Step 3.
-
-If you have an S3 account and want to use it in conjunction with deploying on Heroku, run:
+This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of the movie posters. If you have an S3 account and want to use it in conjunction with deploying on Heroku, run:
 
 	$ heroku config:set S3_ACCESS_KEY=your-access-key-here
 	$ heroku config:set S3_SECRET_KEY=your-secret-key-here
 	$ heroku config:set S3_BUCKET_NAME=your-bucket-name-here
 
-Otherwise, if you are running on your local machine, you still need to set the following environment variables:
+If you have an S3 account but want to run the app locally (e.g. when testing), you still need to set the following environment variables on your local machine:
 
 	$ echo 'export S3_ACCESS_KEY=your-access-key-here' >> venv/bin/activate
 	$ echo 'export S3_SECRET_KEY=your-secret-key-here' >> venv/bin/activate
 	$ echo 'export S3_BUCKET_NAME=your-bucket-name-here' >> venv/bin/activate
 
-This will make sure the environment variables are configured correctly every time you run the virtualenv wrapper.
+This will make sure the environment variables for your S3 bucket are configured correctly every time you run the virtualenv wrapper.
+
+If you don't have an S3 account or *only* want to run the app locally, set the config flag `USE_S3 = False` in `config.py`.
 
 ### Step 4
 
