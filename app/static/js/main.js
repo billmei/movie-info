@@ -105,9 +105,9 @@
             self.movie.parsedActors = self.getRole("Actor", self.movie.actors);
             self.movie.parsedWriters = self.getRole("Writer", self.movie.writer);
             self.movie.parsedAwards = self.getRole("Award", self.movie.awards);
-            self.movie.facebookURL = self.getShareUrl("facebook", self.movie.title);
-            self.movie.twitterURL = self.getShareUrl("twitter", self.movie.title);
-            self.movie.gplusURL = self.getShareUrl("gplus", self.movie.title);
+            self.movie.facebookURL = self.getShareUrl("facebook", self.movie.title, self.movie.imdb_id);
+            self.movie.twitterURL = self.getShareUrl("twitter", self.movie.title, self.movie.imdb_id);
+            self.movie.gplusURL = self.getShareUrl("gplus", self.movie.title, self.movie.imdb_id);
 
             if (self.movie.imdb_id) {
                 window.history.pushState(null, null, '/movie/' + self.movie.imdb_id);
@@ -164,11 +164,11 @@
             }
         };
 
-        this.getShareUrl = function(channel, movieTitle) {
+        this.getShareUrl = function(channel, movieTitle, imdbID) {
             // Generate links for social media buttons
             switch (channel) {
                 case 'facebook':
-                    return 'https://www.facebook.com/sharer/sharer.php?u=' + window.location.href;
+                    return 'https://www.facebook.com/sharer/sharer.php?u=' + window.location.origin + '/movie/' + imdbID;
                 case 'twitter':
                     var statusMesssage;
                     if (movieTitle !== 'N/A') {
@@ -176,9 +176,9 @@
                     } else {
                         statusMesssage = '';
                     }
-                    return 'https://twitter.com/home?status=' + statusMesssage + window.location.href;
+                    return 'https://twitter.com/home?status=' + statusMesssage + window.location.origin + '/movie/' + imdbID;
                 case 'gplus':
-                    return 'https://plus.google.com/share?url=' + window.location.href;
+                    return 'https://plus.google.com/share?url=' + window.location.origin + '/movie/' + imdbID;
             }
         };
     }]);
