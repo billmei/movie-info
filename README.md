@@ -1,6 +1,8 @@
 # Movie Info
 Find info on movies. **[Click here](http://ga-movie-info.herokuapp.com/) for the demo**. Built on Flask, Angular.js, Bootstrap, and jQuery.
 
+## Architecture
+
 [![Movie Info Architecture](http://i.imgur.com/2g7WuYf.png)](https://docs.google.com/drawings/d/146xaqXPqNgaNZRwv9V2uxdQjtM3Uo4iHrLg7-DirJMU)
 
 ## Features
