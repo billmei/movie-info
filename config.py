@@ -1,12 +1,9 @@
 import os
-from dotenv import load_dotenv
 
 APP_NAME = 'movie-info'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
 USE_S3 = True
-
-load_dotenv(PROJECT_DIR, '.env')
 
 SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 OMDB_API_KEY = os.environ.get('OMDB_API_KEY')
