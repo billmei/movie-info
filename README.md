@@ -41,11 +41,11 @@ If you have an S3 account and want to use it in conjunction with deploying on He
 	$ heroku config:set S3_SECRET_KEY=YOUR-SECRET-KEY-HERE
 	$ heroku config:set S3_BUCKET_NAME=YOUR-BUCKET-NAME-HERE
 
-If you have an S3 account but want to run the app locally (e.g. when testing), you still need to set the following environment variables on your local machine:
+If you have an S3 account but want to run the app locally (e.g. when testing), you still need to copy the following environment variables into a file named `.env` in the root folder on your local machine:
 
-	$ echo 'export S3_ACCESS_KEY=YOUR-ACCESS-KEY-HERE' >> venv/bin/activate
-	$ echo 'export S3_SECRET_KEY=YOUR-SECRET-KEY-HERE' >> venv/bin/activate
-	$ echo 'export S3_BUCKET_NAME=YOUR-BUCKET-NAME-HERE' >> venv/bin/activate
+	S3_ACCESS_KEY=YOUR-ACCESS-KEY-HERE
+	S3_SECRET_KEY=YOUR-SECRET-KEY-HERE
+	S3_BUCKET_NAME=YOUR-BUCKET-NAME-HERE
 
 This will make sure the environment variables for your S3 bucket are configured correctly every time you run the virtualenv wrapper. When setting up your S3 account, make sure to set the following policy on your bucket so that the files have permission to be viewed publicly (you need to do this regardless of whether you are running the app locally or on a remote host like Heroku):
 
@@ -72,11 +72,11 @@ Activate `virtualenv` and install the app requirements
 
 ### Step 5
 
-Generate a Flask secret key and save it as `/secret.txt` in the root folder. If running on Heroku instead of localhost, set the environment variable:
+Generate a Flask secret key `FLASK_SECRET_KEY=YOUR-SECRET-KEY-HERE` and append the line to a file called `.env` in the root folder. If running on Heroku instead of localhost, set the environment variable:
 
 	$ heroku config:set FLASK_SECRET_KEY=YOUR-SECRET-KEY-HERE
 
-You also need to [get an OMDB Poster API key](http://beforethecode.com/projects/omdb/apikey.aspx) and save it as `/omdb_api_key.txt`. Again, you also need to set the environment varaible if you are running on Heroku:
+You also need to [get an OMDB Poster API key](http://beforethecode.com/projects/omdb/apikey.aspx) and save it as `OMDB_API_KEY=YOUR-API-KEY-HERE` on a new line in `.env`. Again, you also need to set the environment varaible if you are running on Heroku:
 
 	$ heroku config:set OMDB_API_KEY=YOUR-API-KEY-HERE
 

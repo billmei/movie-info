@@ -1,29 +1,15 @@
 import os
+from dotenv import load_dotenv
 
 APP_NAME = 'movie-info'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
 USE_S3 = True
 
-# From https://gist.github.com/ndarville/3452907
-try:
-    SECRET_KEY
-except NameError:
-    SECRET_FILE = os.path.join(PROJECT_DIR, 'secret.txt')
-    try:
-        SECRET_KEY = open(SECRET_FILE).read().strip()
-    except IOError:
-        SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
+load_dotenv(PROJECT_DIR, '.env')
 
-try:
-    OMDB_API_KEY
-except NameError:
-    OMDB_SECRET_FILE = os.path.join(PROJECT_DIR, 'omdb_api_key.txt')
-    try:
-        OMDB_API_KEY = open(OMDB_SECRET_FILE).read().strip()
-    except IOError:
-        OMDB_API_KEY = os.environ.get('OMDB_API_KEY')
-
+SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
+OMDB_API_KEY = os.environ.get('OMDB_API_KEY')
 S3_ACCESS_KEY = os.environ.get('S3_ACCESS_KEY')
 S3_SECRET_KEY = os.environ.get('S3_SECRET_KEY')
 S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME')

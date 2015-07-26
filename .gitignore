@@ -55,5 +55,4 @@ docs/_build/
 target/
 
 # Secret keys
-omdb_api_key.txt
-secret.txt
+.env
