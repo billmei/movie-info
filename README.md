@@ -33,7 +33,11 @@ Install `virtualenv` and the python3 interpreter:
 
 ### Step 3
 
-This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of the movie posters. If you don't have an S3 account and *only* want to run the app locally, set the config flag `USE_S3 = False` in `config.py`, and skip the rest of Step 3.
+Create an `instance` folder in the root directory and copy `local_config_example.py` into it, except rename it as `config.py` (i.e. `/instance/config.py`). Here you can set instance variables that are only relevant to your local machine. See `local_config_example.py` for an example of what this file can look like.
+
+### Step 4
+
+This app needs [Amazon S3](https://aws.amazon.com/s3/) to store the images of the movie posters. If you don't have an S3 account and *only* want to run the app locally, set the config flag `USE_S3 = False` in `config.py`, and skip the rest of Step 4.
 
 If you have an S3 account and want to use it in conjunction with deploying on Heroku, run:
 
@@ -63,14 +67,14 @@ This will make sure the environment variables for your S3 bucket are configured 
 		]
 	}
 
-### Step 4
+### Step 5
 
 Activate `virtualenv` and install the app requirements
 
 	$ source venv/bin/activate
 	$ pip install -r requirements.txt
 
-### Step 5
+### Step 6
 
 Generate a Flask secret key `FLASK_SECRET_KEY=YOUR-SECRET-KEY-HERE` and append the line to a file called `/instance/.env`. If running on Heroku instead of localhost, set the environment variable:
 
@@ -80,7 +84,7 @@ You also need to [get an OMDB Poster API key](http://beforethecode.com/projects/
 
 	$ heroku config:set OMDB_API_KEY=YOUR-API-KEY-HERE
 
-### Step 5.1 (Optional)
+### Step 6.1 (Optional)
 
 If at any point you want to wipe the database and create a new one from scratch, delete the `app.db` file and the `db_repository` folder. You can then create and migrate the database using:
 
@@ -89,7 +93,7 @@ If at any point you want to wipe the database and create a new one from scratch,
 
 If you `git clone`'d the repo then you shouldn't need to do this as the database uploaded here is already empty.
 
-### Step 6
+### Step 7
 
 Run with
 

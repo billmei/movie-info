@@ -56,3 +56,4 @@ target/
 
 # Secret keys
 .env
+instance/
